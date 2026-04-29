@@ -48,8 +48,8 @@ strip_frontmatter() {
     file="${RULES_DIR}/${RULE_FILES[$i]}"
 
     if [[ ! -f "$file" ]]; then
-      echo "Warning: $file not found, skipping." >&2
-      continue
+      echo "Error: required rule file not found: $file" >&2
+      exit 1
     fi
 
     strip_frontmatter "$file"
