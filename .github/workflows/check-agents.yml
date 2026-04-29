@@ -1,0 +1,28 @@
+name: Check AGENTS.md
+
+on:
+  push:
+    paths:
+      - 'skills/blutui-project-guidelines/rules/**'
+      - 'build-agents.sh'
+  pull_request:
+    paths:
+      - 'skills/blutui-project-guidelines/rules/**'
+      - 'build-agents.sh'
+
+jobs:
+  check-agents:
+    name: Verify AGENTS.md is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run build-agents.sh
+        run: bash build-agents.sh
+
+      - name: Fail if AGENTS.md is stale
+        run: |
+          if ! git diff --exit-code skills/blutui-project-guidelines/AGENTS.md; then
+            echo "AGENTS.md is out of date. Run build-agents.sh and commit the result."
+            exit 1
+          fi
