@@ -100,7 +100,7 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/defualt.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
 **Example**: Define a base.html template for a two-column page.
 

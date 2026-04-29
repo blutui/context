@@ -12,6 +12,7 @@ The agent must pay attention to route patterns when the project would require to
 - A route pattern could include parameter(s) (e.g., `/team/:name`), which is accessed in code via `route.data.name`.
 - The supported parameter types: string, slug, date, time, number.
 - Each unique route pattern is mapped to a single template file.
+- **Do not create route patterns for blogs.** Blutui blogs auto-route — see `rules/blog.md`. Use route patterns only for collection-driven detail pages (e.g. `/team/:name`, `/products/:slug`).
 
 Route patterns can be utilised to filter collections as shown below:
 

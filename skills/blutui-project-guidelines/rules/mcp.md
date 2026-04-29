@@ -25,6 +25,8 @@ tags: mcp, tools, search, documentation
 | `create_route_pattern` | Create a route pattern |
 | `create_webhook` | Create a webhook |
 
+**The MCP does not expose `update_*` or `delete_*` tools.** To modify or remove an existing resource, the user must do it from the Blutui dashboard. Do not attempt to update or delete resources via MCP — instruct the user to make the change in the dashboard instead.
+
 **List**
 
 | Tool | Description |
@@ -64,6 +66,16 @@ tags: mcp, tools, search, documentation
 | Tool | Description |
 | ---- | ----------- |
 | `search_blutui_documentation` | Search the Blutui documentation |
+
+### Setup
+
+Before MCP tools are available, the user must run `courier mcp init` once. After that, the MCP server starts automatically whenever Courier is running.
+
+```bash
+courier mcp init   # one-time setup
+```
+
+If MCP tools are unreachable, prompt the user to run `courier mcp init` and ensure Courier is running.
 
 ### Handle Validation (Pre-flight Rule)
 

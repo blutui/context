@@ -35,11 +35,11 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
 <div>
   <h1>{{ blog.name }}</h1>
 
-  {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) | reverse %}
+  {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) %}
     <div>
       <img src="{{ post.cover_image }}" alt="{{ post.title }}">
       <h2>{{ post.title }}</h2>
@@ -72,7 +72,7 @@ On the post page the `post` object is automatically available.
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
 <div>
   <h1>{{ post.title }}</h1>
   <h3>{{ post.description }}</h3>

@@ -15,10 +15,39 @@ Menus are managed in the Blutui dashboard and accessed in templates via `cms.men
 {% set nav = cms.menu('main') %}
 <ul>
   {% for item in nav.items %}
-    <li><a href="{{ item.href }}">{{ item.label }}</a></li>
+    {% if item.active %}
+      <li>
+        <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+          {{ item.label }}
+        </a>
+      </li>
+    {% endif %}
   {% endfor %}
 </ul>
 ```
+
+Always check `item.active` before rendering a menu item. Items with `active: false` have been hidden by an editor in the dashboard and must not appear on the site.
+
+### Menu and Item Fields
+
+**Menu object:**
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Menu name |
+| `handle` | Menu handle |
+| `items` | Array of top-level menu items |
+
+**Menu item fields:**
+
+| Field | Description |
+| ----- | ----------- |
+| `label` | Display label |
+| `href` | Link URL |
+| `opens_new_tab` | `true` if link should open in a new tab — render `target="_blank"` |
+| `active` | `true` if the item should be visible on the site — skip rendering when `false` |
+| `order` | Manual ordering value |
+| `items` | Nested child items (for dropdowns) |
 
 ### Dropdown / Nested Navigation
 
@@ -27,17 +56,27 @@ Menu items can have children for dropdown menus. Check `item.items` before rende
 ```canvas
 {% set nav = cms.menu('main') %}
 {% for item in nav.items %}
-  {% if item.items %}
-    <div>
-      <button>{{ item.label }}</button>
-      <ul>
-        {% for child in item.items %}
-          <li><a href="{{ child.href }}">{{ child.label }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% else %}
-    <a href="{{ item.href }}">{{ item.label }}</a>
+  {% if item.active %}
+    {% if item.items %}
+      <div>
+        <button>{{ item.label }}</button>
+        <ul>
+          {% for child in item.items %}
+            {% if child.active %}
+              <li>
+                <a href="{{ child.href }}" {% if child.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                  {{ child.label }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+        {{ item.label }}
+      </a>
+    {% endif %}
   {% endif %}
 {% endfor %}
 ```
@@ -57,4 +96,4 @@ Projects typically have multiple menus for different regions:
 - Use `create_menu` to register a new menu in the dashboard.
 - After creating a menu, add items via the dashboard or the relevant MCP tool.
 
-Reference: [Link to documentation](https://docs.blutui.com/docs/menus/getting-started)
+Reference: [Add a menu to your project](https://docs.blutui.com/guides/add-menu-to-project)

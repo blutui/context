@@ -42,9 +42,23 @@ Before generating any HTML or component code, the agent must detect the project'
 
 ### Migrating a `pages/` Directory
 
-If a `pages/` directory is found in the project, treat every file in it as a static page that needs to be migrated to the Blutui layout system. Follow this sequence for each file:
+If a `pages/` directory is found in the project, every file in it must be migrated to the Blutui layout system. Follow this sequence for **each file**:
 
-1. **Create a layout file** — Copy the page content into a new file at `views/layouts/<page-name>.html`. Wrap the content in the correct template inheritance structure:
+#### URL Mapping
+
+The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
+
+| `pages/` file | Layout path | Registered URL |
+| ------------- | ----------- | -------------- |
+| `index.html` | `views/layouts/home.html` | `/` |
+| `about.html` | `views/layouts/about.html` | `/about` |
+| `contact.html` | `views/layouts/contact.html` | `/contact` |
+
+**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.html` (or another descriptive name) to avoid confusion.
+
+#### Migration Steps (repeat for each file)
+
+1. **Create the layout file** — Copy the page content into the correct path from the table above. Wrap it in the template inheritance structure:
 
 ```canvas
 {% extends 'templates/default.html' %}
@@ -54,13 +68,15 @@ If a `pages/` directory is found in the project, treat every file in it as a sta
 {% endblock %}
 ```
 
-2. **Register the page via MCP** — Run `list_pages` first to confirm no page with the same handle already exists, then call `create_page` with the layout path relative to `views/` (e.g. `layouts/about.html`).
+2. **Register via MCP** — Run `list_pages` to confirm no conflict, then call `create_page` with:
+   - `layout` path relative to `views/` (e.g. `layouts/home.html`)
+   - `url` set to the correct registered URL (e.g. `/` for the homepage)
 
-3. **Delete the original file** — Once the layout is created and the page is registered, remove the file from `pages/`.
+3. **Delete the original file immediately** — Do not proceed to the next file until the current file has been deleted from `pages/`. This step is mandatory, not optional.
 
-4. **Repeat** until the `pages/` directory is empty, then delete the directory itself.
+4. **After all files are migrated** — Delete the `pages/` directory itself.
 
-Never leave a `pages/` directory in the project. If the migration cannot be completed in one pass, notify the user of which files remain.
+**The migration is not complete until the `pages/` directory no longer exists.** If the migration cannot finish in one pass, notify the user of exactly which files remain and their target layout paths.
 
 Reference: [Link to documentation](https://docs.blutui.com/docs/getting-started/folder-structure)
 
@@ -103,7 +119,7 @@ Follow these steps every time a new page is needed:
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {{ include('components/hero.html') }}
 
   <section>
@@ -235,7 +251,7 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/defualt.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
 **Example**: Define a base.html template for a two-column page.
 
@@ -415,6 +431,8 @@ Use `include` to pull reusable components from the `views/components/` directory
 | `create_route_pattern` | Create a route pattern |
 | `create_webhook` | Create a webhook |
 
+**The MCP does not expose `update_*` or `delete_*` tools.** To modify or remove an existing resource, the user must do it from the Blutui dashboard. Do not attempt to update or delete resources via MCP — instruct the user to make the change in the dashboard instead.
+
 **List**
 
 | Tool | Description |
@@ -455,6 +473,16 @@ Use `include` to pull reusable components from the `views/components/` directory
 | ---- | ----------- |
 | `search_blutui_documentation` | Search the Blutui documentation |
 
+### Setup
+
+Before MCP tools are available, the user must run `courier mcp init` once. After that, the MCP server starts automatically whenever Courier is running.
+
+```bash
+courier mcp init   # one-time setup
+```
+
+If MCP tools are unreachable, prompt the user to run `courier mcp init` and ensure Courier is running.
+
 ### Handle Validation (Pre-flight Rule)
 
 Before calling any `create_*` tool, always run the corresponding `list_*` tool first and check that the desired handle does not already exist. If a conflict is found, notify the user instead of proceeding.
@@ -473,11 +501,25 @@ Reference:
 
 ## Courier
 
-Courier is a command-line interface tool to interact with a project. It allows user's to easily push code to their project and pull code down to their machine.
+Courier is the command-line interface for interacting with a Blutui project. It pushes code to the platform, pulls code down to the local machine, and bundles the Blutui MCP server.
 
-- Courier includes the Blutui MCP server that comes with powerful tools designed specifically for this project.
+Courier must be installed and configured on the user's machine. Run `courier version` to confirm it is installed.
 
-Courier must be installed and configured on the user's machine to enable full functionality. `courier version` command can be used to check if the user has courier installed.
+### Common Commands
+
+| Command | Description |
+| ------- | ----------- |
+| `courier version` | Print the installed Courier version |
+| `courier login` | Authenticate Courier against the user's Blutui account |
+| `courier init` | Initialise Courier inside an existing project directory |
+| `courier create` | Scaffold a new Blutui project |
+| `courier dev` | Start the local development server with file watching |
+| `courier push` | Push local `views/` and `public/` changes up to the platform |
+| `courier pull` | Pull the latest project code down from the platform |
+| `courier open` | Open the project in the Blutui dashboard |
+| `courier mcp init` | One-time setup for the Blutui MCP server (the server then starts automatically whenever Courier is running) |
+
+Courier only syncs the `public/` and `views/` directories — files outside those directories are ignored by `push` and `pull`.
 
 Reference: [Link to documentation](https://docs.blutui.com/docs/courier/getting-started)
 
@@ -486,11 +528,26 @@ Reference: [Link to documentation](https://docs.blutui.com/docs/courier/getting-
 
 ## Cassettes
 
-Blutui Cassettes function as a version control system for your front-end logic, allowing you to manage and toggle between various website designs within a single project.
+Cassettes function as a version control system for the front-end logic of a Blutui project. Each project can have multiple cassettes, allowing the developer to manage and toggle between different website designs within a single project.
 
-Each project can have multiple cassettes.
+### Switching Cassettes
 
-To switch cassettes, update the cassette property within the `courier.json` file. If this property is missing or undefined, prompt the user to provide the specific cassette handle.
+Update the `cassette` property in `courier.json` to switch the active cassette. If the property is missing or undefined, prompt the user for the specific cassette handle.
+
+### Active Cassette Safety
+
+**Never develop directly on an active (live) cassette.** The recommended workflow is:
+
+1. Duplicate the active cassette in the dashboard.
+2. Switch the local `cassette` value in `courier.json` to the new duplicate.
+3. Make changes against the duplicate.
+4. Promote it back to active when ready.
+
+When pushing changes to an active cassette directly, Courier will refuse the operation unless the `--allow-active` flag is passed. Do not use `--allow-active` without explicit user confirmation — it bypasses the safety check and can break a live site immediately.
+
+### Canopy Content Across Cassettes
+
+**Important:** Canopy elements with the same `name` (handle) share content across cassettes. Renaming or duplicating a cassette does not duplicate the underlying Canopy content — both cassettes will read and write the same value. To isolate content between cassettes, use a different handle in the new cassette's templates.
 
 Reference: [Link to documentation](https://docs.blutui.com/docs/cassettes/getting-started)
 
@@ -616,11 +673,11 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
 <div>
   <h1>{{ blog.name }}</h1>
 
-  {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) | reverse %}
+  {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) %}
     <div>
       <img src="{{ post.cover_image }}" alt="{{ post.title }}">
       <h2>{{ post.title }}</h2>
@@ -653,7 +710,7 @@ On the post page the `post` object is automatically available.
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
 <div>
   <h1>{{ post.title }}</h1>
   <h3>{{ post.description }}</h3>
@@ -711,14 +768,39 @@ Ensure your `views` directory is organized as follows:
   <input type="{{ data.type }}" name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %} />
 {% endmacro %}
 
+{% macro textarea(data) %}
+  <textarea name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %}></textarea>
+{% endmacro %}
+
+{% macro select(data) %}
+  <select name="{{ data.name }}" {% if data.required %} required {% endif %}>
+    {% for option in data.options %}
+      <option value="{{ option.value }}">{{ option.label }}</option>
+    {% endfor %}
+  </select>
+{% endmacro %}
+
+{% macro errors(data) %}
+  {% if data.errors %}
+    <ul class="field-errors">
+      {% for error in data.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
 {% macro field(data) %}
   <div class="field-wrapper">
     <label>{{ data.label }}</label>
     {% if data.type == 'textarea' %}
       {{ _self.textarea(data) }}
+    {% elseif data.type == 'select' %}
+      {{ _self.select(data) }}
     {% else %}
       {{ _self.input(data) }}
     {% endif %}
+    {{ _self.errors(data) }}
   </div>
 {% endmacro %}
 ```
@@ -739,8 +821,24 @@ Ensure your `views` directory is organized as follows:
 
 ### Form Field Constraints
 
-- **Allowed Types:** "text", "textarea", "radio", "select", "checkbox", "url", "email", "phone", "hidden", "time", "date", "number"
-- Do not attempt to use custom field types. If a type is not on this list, default to `text` and notify the user.
+**Allowed field types:**
+
+| Type | Description |
+| ---- | ----------- |
+| `text` | Single line of text |
+| `textarea` | Multi-line plain text |
+| `email` | Email address with validation |
+| `phone` | Phone number |
+| `url` | Web address or link |
+| `number` | Numeric value |
+| `select` | Dropdown — pick one option |
+| `radio` | Choose one option from a visible list |
+| `checkbox` | Select multiple options from a list |
+| `date` | Calendar date picker |
+| `time` | Time of day picker |
+| `hidden` | Hidden field not visible to the user |
+
+- Do not use custom field types. If a required type is not in this list, default to `text` and notify the user.
 - Always transmit field types to the MCP in lowercase format.
 
 ### MCP Workflow
@@ -762,10 +860,39 @@ Menus are managed in the Blutui dashboard and accessed in templates via `cms.men
 {% set nav = cms.menu('main') %}
 <ul>
   {% for item in nav.items %}
-    <li><a href="{{ item.href }}">{{ item.label }}</a></li>
+    {% if item.active %}
+      <li>
+        <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+          {{ item.label }}
+        </a>
+      </li>
+    {% endif %}
   {% endfor %}
 </ul>
 ```
+
+Always check `item.active` before rendering a menu item. Items with `active: false` have been hidden by an editor in the dashboard and must not appear on the site.
+
+### Menu and Item Fields
+
+**Menu object:**
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Menu name |
+| `handle` | Menu handle |
+| `items` | Array of top-level menu items |
+
+**Menu item fields:**
+
+| Field | Description |
+| ----- | ----------- |
+| `label` | Display label |
+| `href` | Link URL |
+| `opens_new_tab` | `true` if link should open in a new tab — render `target="_blank"` |
+| `active` | `true` if the item should be visible on the site — skip rendering when `false` |
+| `order` | Manual ordering value |
+| `items` | Nested child items (for dropdowns) |
 
 ### Dropdown / Nested Navigation
 
@@ -774,17 +901,27 @@ Menu items can have children for dropdown menus. Check `item.items` before rende
 ```canvas
 {% set nav = cms.menu('main') %}
 {% for item in nav.items %}
-  {% if item.items %}
-    <div>
-      <button>{{ item.label }}</button>
-      <ul>
-        {% for child in item.items %}
-          <li><a href="{{ child.href }}">{{ child.label }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% else %}
-    <a href="{{ item.href }}">{{ item.label }}</a>
+  {% if item.active %}
+    {% if item.items %}
+      <div>
+        <button>{{ item.label }}</button>
+        <ul>
+          {% for child in item.items %}
+            {% if child.active %}
+              <li>
+                <a href="{{ child.href }}" {% if child.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                  {{ child.label }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+        {{ item.label }}
+      </a>
+    {% endif %}
   {% endif %}
 {% endfor %}
 ```
@@ -804,7 +941,7 @@ Projects typically have multiple menus for different regions:
 - Use `create_menu` to register a new menu in the dashboard.
 - After creating a menu, add items via the dashboard or the relevant MCP tool.
 
-Reference: [Link to documentation](https://docs.blutui.com/docs/menus/getting-started)
+Reference: [Add a menu to your project](https://docs.blutui.com/guides/add-menu-to-project)
 
 ---
 
@@ -816,6 +953,7 @@ The agent must pay attention to route patterns when the project would require to
 - A route pattern could include parameter(s) (e.g., `/team/:name`), which is accessed in code via `route.data.name`.
 - The supported parameter types: string, slug, date, time, number.
 - Each unique route pattern is mapped to a single template file.
+- **Do not create route patterns for blogs.** Blutui blogs auto-route — see `rules/blog.md`. Use route patterns only for collection-driven detail pages (e.g. `/team/:name`, `/products/:slug`).
 
 Route patterns can be utilised to filter collections as shown below:
 
@@ -934,7 +1072,7 @@ For `cms_list`, `cms_quote`, and `cms_code` — use `search_blutui_documentation
 ### Complete Example
 
 ```canvas
-{% block content %}
+{% block body %}
 <section class="bg-white text-slate-900">
   <div class="mx-auto max-w-7xl px-6 py-20">
     {{ cms_heading('heading-hero', {

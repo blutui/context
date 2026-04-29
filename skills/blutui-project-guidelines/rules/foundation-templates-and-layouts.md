@@ -41,7 +41,7 @@ Follow these steps every time a new page is needed:
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {{ include('components/hero.html') }}
 
   <section>

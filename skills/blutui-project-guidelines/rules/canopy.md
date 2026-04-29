@@ -104,7 +104,7 @@ For `cms_list`, `cms_quote`, and `cms_code` — use `search_blutui_documentation
 ### Complete Example
 
 ```canvas
-{% block content %}
+{% block body %}
 <section class="bg-white text-slate-900">
   <div class="mx-auto max-w-7xl px-6 py-20">
     {{ cms_heading('heading-hero', {
