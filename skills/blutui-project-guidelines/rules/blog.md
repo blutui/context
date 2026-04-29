@@ -41,7 +41,7 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 
   {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) %}
     <div>
-      <img src="{{ post.cover_image }}" alt="{{ post.title }}">
+      <img src="{{ post.cover_image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ post.title }}">
       <h2>{{ post.title }}</h2>
       <p>{{ post.description }}</p>
       <p>{{ post.publish_date | date('d M Y') }}</p>
@@ -79,7 +79,7 @@ On the post page the `post` object is automatically available.
   <p>{{ post.publish_date | date('d M Y') }}</p>
   <p>{{ post.author }}</p>
   <p>{{ post.content | reading_time }} reading time</p>
-  <img src="{{ post.cover_image }}" alt="{{ post.title }}">
+  <img src="{{ post.cover_image | image_url({ width: 1200, format: 'webp' }) }}" alt="{{ post.title }}">
   <div>{{ post.content | raw }}</div>
 </div>
 {% endblock %}

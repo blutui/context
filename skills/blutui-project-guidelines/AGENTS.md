@@ -48,8 +48,8 @@ If a `pages/` directory is found in the project, every file in it must be migrat
 
 The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
 
-| `pages/` file | Layout path | Registered URL |
-| ------------- | ----------- | -------------- |
+| `pages/` file | Layout file path | Registered URL |
+| ------------- | ---------------- | -------------- |
 | `index.html` | `views/layouts/home.html` | `/` |
 | `about.html` | `views/layouts/about.html` | `/about` |
 | `contact.html` | `views/layouts/contact.html` | `/contact` |
@@ -63,7 +63,7 @@ The filename in `pages/` determines the route it serves. Use this mapping to der
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {# content from the original page file goes here #}
 {% endblock %}
 ```
@@ -679,7 +679,7 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 
   {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) %}
     <div>
-      <img src="{{ post.cover_image }}" alt="{{ post.title }}">
+      <img src="{{ post.cover_image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ post.title }}">
       <h2>{{ post.title }}</h2>
       <p>{{ post.description }}</p>
       <p>{{ post.publish_date | date('d M Y') }}</p>
@@ -717,7 +717,7 @@ On the post page the `post` object is automatically available.
   <p>{{ post.publish_date | date('d M Y') }}</p>
   <p>{{ post.author }}</p>
   <p>{{ post.content | reading_time }} reading time</p>
-  <img src="{{ post.cover_image }}" alt="{{ post.title }}">
+  <img src="{{ post.cover_image | image_url({ width: 1200, format: 'webp' }) }}" alt="{{ post.title }}">
   <div>{{ post.content | raw }}</div>
 </div>
 {% endblock %}
@@ -729,9 +729,9 @@ On the post page the `post` object is automatically available.
 | ----- | ----------- |
 | `post.title` | Post title |
 | `post.description` | Short description |
-| `post.content` | Rich text body — render with `\| raw` |
+| `post.content` | Rich text body — render with `| raw` |
 | `post.cover_image` | Cover image URL |
-| `post.publish_date` | Publication date — format with `\| date()` |
+| `post.publish_date` | Publication date — format with `| date()` |
 | `post.author` | Author name |
 | `post.slug` | Post URL — use directly in `<a href>` |
 
