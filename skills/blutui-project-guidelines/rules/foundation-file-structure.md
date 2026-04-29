@@ -52,8 +52,8 @@ If a `pages/` directory is found in the project, every file in it must be migrat
 
 The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
 
-| `pages/` file | Layout path | Registered URL |
-| ------------- | ----------- | -------------- |
+| `pages/` file | Layout file path | Registered URL |
+| ------------- | ---------------- | -------------- |
 | `index.html` | `views/layouts/home.html` | `/` |
 | `about.html` | `views/layouts/about.html` | `/about` |
 | `contact.html` | `views/layouts/contact.html` | `/contact` |
