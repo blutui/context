@@ -1,3 +1,0 @@
----
-name: developing-with-collections
----

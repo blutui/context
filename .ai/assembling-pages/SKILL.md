@@ -1,3 +1,0 @@
----
-name: assembling-pages
----
