@@ -1,7 +1,7 @@
 {
   "name": "blutui-project-guidelines",
   "title": "Blutui Project Guidelines",
-  "description": "Blutui project guidelines from the Blutui Engineering team. Use this skill whenever working on ANY Blutui project — writing or editing templates, layouts, components, or partials; creating or querying Collections; building or handling forms; configuring routing or Courier; working with Canopy or Cassettes; using the Blutui MCP; or setting up a new Blutui project from scratch. If the user metions Blutui, Canopy, Cassettes, Courier, or any Blutui-specific concept, always load and follow this skill before writing any code or configuration.",
+  "description": "Blutui project guidelines from the Blutui Engineering team. Use this skill whenever working on ANY Blutui project — writing or editing templates, layouts, components, or partials; creating or querying Collections; building or handling forms; configuring routing or Courier; working with Canopy or Cassettes; using the Blutui MCP; or setting up a new Blutui project from scratch. If the user mentions Blutui, Canopy, Cassettes, Courier, or any Blutui-specific concept, always load and follow this skill before writing any code or configuration.",
   "license": "MIT",
   "sections": {
     "foundation": 1,
