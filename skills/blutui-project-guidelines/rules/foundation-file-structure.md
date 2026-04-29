@@ -44,4 +44,26 @@ Before generating any HTML or component code, the agent must detect the project'
 - If no style system is detected, **ask the user** which style approach they want before generating any HTML.
 - Never generate unstyled or bare HTML when a style system is available in the project.
 
+### Migrating a `pages/` Directory
+
+If a `pages/` directory is found in the project, treat every file in it as a static page that needs to be migrated to the Blutui layout system. Follow this sequence for each file:
+
+1. **Create a layout file** — Copy the page content into a new file at `views/layouts/<page-name>.html`. Wrap the content in the correct template inheritance structure:
+
+```canvas
+{% extends 'templates/default.html' %}
+
+{% block content %}
+  {# content from the original page file goes here #}
+{% endblock %}
+```
+
+2. **Register the page via MCP** — Run `list_pages` first to confirm no page with the same handle already exists, then call `create_page` with the layout path relative to `views/` (e.g. `layouts/about.html`).
+
+3. **Delete the original file** — Once the layout is created and the page is registered, remove the file from `pages/`.
+
+4. **Repeat** until the `pages/` directory is empty, then delete the directory itself.
+
+Never leave a `pages/` directory in the project. If the migration cannot be completed in one pass, notify the user of which files remain.
+
 Reference: [Link to documentation](https://docs.blutui.com/docs/getting-started/folder-structure)

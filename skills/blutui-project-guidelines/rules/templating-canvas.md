@@ -205,4 +205,22 @@ Layout (`views/layouts/about.html`):
 {% endblock %}
 ```
 
+### Image URLs
+
+Use the `image_url()` filter to optimise images served from Blutui. Always prefer `webp` format and set an explicit width:
+
+```canvas
+<img src="{{ entry.image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ entry.title }}">
+```
+
+Available options:
+
+| Option   | Values                    | Description                        |
+| -------- | ------------------------- | ---------------------------------- |
+| `width`  | integer (px)              | Resize to this width               |
+| `height` | integer (px)              | Resize to this height              |
+| `format` | `webp`, `jpg`, `png`      | Convert to this format             |
+
+Never render a raw image URL from a collection or blog field without passing it through `image_url()`.
+
 Reference: [Link to documentation](https://docs.blutui.com/guides/what-is-blutui-canvas)

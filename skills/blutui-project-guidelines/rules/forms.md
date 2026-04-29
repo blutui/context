@@ -56,4 +56,8 @@ Ensure your `views` directory is organized as follows:
 - Do not attempt to use custom field types. If a type is not on this list, default to `text` and notify the user.
 - Always transmit field types to the MCP in lowercase format.
 
+### MCP Workflow
+
+Run `list_forms` first to confirm no form with the same handle exists, then use `create_form` to register the form. Use `list_submissions` or `retrieve_submission` to access submitted data.
+
 Reference: [Link to documentation](https://docs.blutui.com/guides/create-form)
