@@ -46,9 +46,23 @@ Before generating any HTML or component code, the agent must detect the project'
 
 ### Migrating a `pages/` Directory
 
-If a `pages/` directory is found in the project, treat every file in it as a static page that needs to be migrated to the Blutui layout system. Follow this sequence for each file:
+If a `pages/` directory is found in the project, every file in it must be migrated to the Blutui layout system. Follow this sequence for **each file**:
 
-1. **Create a layout file** — Copy the page content into a new file at `views/layouts/<page-name>.html`. Wrap the content in the correct template inheritance structure:
+#### URL Mapping
+
+The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
+
+| `pages/` file | Layout path | Registered URL |
+| ------------- | ----------- | -------------- |
+| `index.html` | `views/layouts/home.html` | `/` |
+| `about.html` | `views/layouts/about.html` | `/about` |
+| `contact.html` | `views/layouts/contact.html` | `/contact` |
+
+**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.html` (or another descriptive name) to avoid confusion.
+
+#### Migration Steps (repeat for each file)
+
+1. **Create the layout file** — Copy the page content into the correct path from the table above. Wrap it in the template inheritance structure:
 
 ```canvas
 {% extends 'templates/default.html' %}
@@ -58,12 +72,14 @@ If a `pages/` directory is found in the project, treat every file in it as a sta
 {% endblock %}
 ```
 
-2. **Register the page via MCP** — Run `list_pages` first to confirm no page with the same handle already exists, then call `create_page` with the layout path relative to `views/` (e.g. `layouts/about.html`).
+2. **Register via MCP** — Run `list_pages` to confirm no conflict, then call `create_page` with:
+   - `layout` path relative to `views/` (e.g. `layouts/home.html`)
+   - `url` set to the correct registered URL (e.g. `/` for the homepage)
 
-3. **Delete the original file** — Once the layout is created and the page is registered, remove the file from `pages/`.
+3. **Delete the original file immediately** — Do not proceed to the next file until the current file has been deleted from `pages/`. This step is mandatory, not optional.
 
-4. **Repeat** until the `pages/` directory is empty, then delete the directory itself.
+4. **After all files are migrated** — Delete the `pages/` directory itself.
 
-Never leave a `pages/` directory in the project. If the migration cannot be completed in one pass, notify the user of which files remain.
+**The migration is not complete until the `pages/` directory no longer exists.** If the migration cannot finish in one pass, notify the user of exactly which files remain and their target layout paths.
 
 Reference: [Link to documentation](https://docs.blutui.com/docs/getting-started/folder-structure)
