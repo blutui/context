@@ -91,9 +91,9 @@ On the post page the `post` object is automatically available.
 | ----- | ----------- |
 | `post.title` | Post title |
 | `post.description` | Short description |
-| `post.content` | Rich text body — render with `\| raw` |
+| `post.content` | Rich text body — render with `| raw` |
 | `post.cover_image` | Cover image URL |
-| `post.publish_date` | Publication date — format with `\| date()` |
+| `post.publish_date` | Publication date — format with `| date()` |
 | `post.author` | Author name |
 | `post.slug` | Post URL — use directly in `<a href>` |
 
