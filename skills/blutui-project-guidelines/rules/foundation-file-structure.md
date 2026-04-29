@@ -67,7 +67,7 @@ The filename in `pages/` determines the route it serves. Use this mapping to der
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {# content from the original page file goes here #}
 {% endblock %}
 ```
