@@ -56,14 +56,13 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 
 **`blog` object fields:**
 
-| Field | Description |
-| ----- | ----------- |
-| `blog.name` | Blog name |
-| `blog.slug` | Blog slug |
-| `blog.uri` | Blog URI path |
-| `blog.description` | Blog description |
-| `blog.posts` | Array of all posts |
-| `blog.post_count` | Total number of posts |
+| Field              | Description        |
+| ------------------ | ------------------ |
+| `blog.name`        | Blog name          |
+| `blog.slug`        | Blog slug          |
+| `blog.uri`         | Blog URI path      |
+| `blog.description` | Blog description   |
+| `blog.posts`       | Array of all posts |
 
 ### Post Layout (`post.html`)
 
@@ -87,15 +86,15 @@ On the post page the `post` object is automatically available.
 
 **`post` object fields:**
 
-| Field | Description |
-| ----- | ----------- |
-| `post.title` | Post title |
-| `post.description` | Short description |
-| `post.content` | Rich text body — render with `| raw` |
-| `post.cover_image` | Cover image URL |
-| `post.publish_date` | Publication date — format with `| date()` |
-| `post.author` | Author name |
-| `post.slug` | Post URL — use directly in `<a href>` |
+| Field               | Description                           |
+| ------------------- | ------------------------------------- | ------- |
+| `post.title`        | Post title                            |
+| `post.description`  | Short description                     |
+| `post.content`      | Rich text body — render with `        | raw`    |
+| `post.cover_image`  | Cover image URL                       |
+| `post.publish_date` | Publication date — format with `      | date()` |
+| `post.author`       | Author name                           |
+| `post.slug`         | Post URL — use directly in `<a href>` |
 
 ### MCP Workflow
 
