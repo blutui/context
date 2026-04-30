@@ -1,6 +1,6 @@
 ---
 name: blutui-project-guidelines
-description: Guidelines for building Blutui projects. This skill should be used when writing, reviewing, or refactoring Blutui Canvas code.
+description: Blutui project guidelines from the Blutui Engineering team. Use this skill whenever working on ANY Blutui project — writing or editing templates, layouts, components, or partials; creating or querying Collections; building or handling forms; configuring routing or Courier; working with Canopy or Cassettes; using the Blutui MCP; or setting up a new Blutui project from scratch. If the user mentions Blutui, Canopy, Cassettes, Courier, or any Blutui-specific concept, always load and follow this skill before writing any code or configuration.
 license: MIT
 metadata:
   author: Blutui
@@ -9,60 +9,39 @@ metadata:
 
 # Blutui Project Guidelines
 
-Contains 12 rules across 3 categories, prioritized by impact to guide automated refactoring and code generation.
+Load the rule files that match your task. Always load ALL that apply — multiple rules often overlap.
 
-## When to Apply
+## Rule Index
 
-Reference these guidelines when:
+| Task                                                      | Load                                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------- |
+| Creating/editing any template, layout, or component       | `rules/foundation-templates-and-layouts.md`                     |
+| Writing Canvas template syntax (tags, filters, functions) | `rules/templating-canvas.md`                                    |
+| Including/embedding other templates                       | `rules/templating-including-templates.md`                       |
+| Working with Collections (querying, displaying data)      | `rules/collections.md`                                          |
+| Building a blog listing or post page                      | `rules/blog.md`                                                 |
+| Building or processing forms                              | `rules/forms.md`                                                |
+| Building site navigation (header, footer, dropdowns)      | `rules/menus.md`                                                |
+| Setting up routing or URL patterns                        | `rules/route-patterns.md`                                       |
+| Configuring Courier                                       | `rules/courier.md`, `rules/foundation-courier-configuration.md` |
+| Project file structure / starting a new project           | `rules/foundation-file-structure.md`                            |
+| Version control / switching cassettes                     | `rules/cassettes.md`                                            |
+| Calling the Blutui MCP or writing MCP integrations        | `rules/mcp.md`                                                  |
+| Using Canopy (in-page editor)                             | `rules/canopy.md`                                               |
 
-- Writing new Blutui project templates, layouts, components, and more
-- Refactoring existing frontend code
+Rule files live at: `rules/<rule-name>.md`
 
-## Rule Categories by Priority
+## Core Rules (Always Apply)
 
-| Priority | Category   | Impact   | Prefix        |
-| -------- | ---------- | -------- | ------------- |
-| 0        | Section 0  | MEDIUM   | `undefined-`  |
-| 1        | Foundation | CRITICAL | `foundation-` |
-| 2        | Templating | CRITICAL | `templating-` |
+1. **Templates are the HTML shell; layouts are page types editors choose.** Templates (`views/templates/`) define the outer structure that wraps every page — developers own them, editors never touch them. Layouts (`views/layouts/`) extend templates and represent individual page designs that editors pick when creating pages in the dashboard. See `rules/foundation-templates-and-layouts.md`.
+2. **Use Canvas for all templating logic.** See `rules/templating-canvas.md`.
+3. **Store structured content in Collections**, not hardcoded in templates. See `rules/collections.md`.
+4. **Never build raw HTML forms** — use Blutui's form tags. See `rules/forms.md`.
+5. **Don't invent new top-level directories.** See `rules/foundation-file-structure.md`.
+6. **Search documentation first.** Use `search_blutui_documentation` via Blutui MCP before making code changes. See `rules/mcp.md`.
 
-## Quick Reference
+## Full Reference
 
-### 0. Section 0 (MEDIUM)
+For all rules in one document: `AGENTS.md`
 
-- `canopy` - Canopy
-- `cassettes` - Cassettes - Project Version Control
-- `collections` - Collections
-- `courier` - Courier
-- `forms` - Form Standards
-- `mcp` - MCP
-- `route-patterns` - Routing Pattern Standards
-
-### 1. Foundation (CRITICAL)
-
-- `foundation-courier-configuration` - Courier Configuration
-- `foundation-file-structure` - File Structure
-- `foundation-templates-and-layouts` - Templates and Layouts
-
-### 2. Templating (CRITICAL)
-
-- `templating-canvas` - Canvas
-- `templating-including-templates` - Including other templates
-
-## How to Use
-
-Read individual rule files for detailed explanations and code examples:
-
-```
-rules/canopy.md
-rules/foundation-courier-configuration.md
-rules/templating-canvas.md
-```
-
-Each rule file contains:
-
-- Brief explanation of why it matters
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`
+Use `AGENTS.md` when you need a comprehensive reference or are unsure which rules apply.

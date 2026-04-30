@@ -7,17 +7,24 @@ tags: project, file structure, views, templates, layouts, components
 
 ## Layouts and Templates
 
-### Templates
+Blutui uses two distinct layers to build pages. Understanding the difference is critical — they serve different audiences and must not be confused.
 
-- A template defines the overall structure of the project, including common elements like headers, footers, and navigation menus used to provide a consistent look and feel across multiple pages in a project.
-- A template can be extended by another template file but not a layout.
+### Templates (`views/templates/`)
 
-### Layouts
+A template is the **outer HTML shell** of the site — the `<html>`, `<head>`, global scripts, and any elements that appear on every single page (e.g. a site-wide `<nav>` or `<footer>`). Templates use `{% block %}` tags to mark regions where layouts can inject page-specific content.
 
-- Layouts are the **only** way to create pages in Blutui. Each layout file in `views/layouts/` corresponds to a page created via the Blutui dashboard or MCP tools.
-- **Never create files in a `pages/` directory.** The `pages/` directory must be ignored entirely. All page content lives in layout files.
-- When using the `layout`, `template`, `post_layout` or `blog_layout` parameters in any Blutui MCP tool, make sure the layout file path is relative to the `views` directory (e.g., `layouts/about.html`, not `views/layouts/about.html`).
-- Always place layout files in the `views/layouts` directory.
+- Developers write and maintain templates. **Editors never see or interact with templates directly.**
+- A template can extend another template, but layouts cannot extend each other.
+- Think of a template as infrastructure — it changes rarely and affects every page at once.
+
+### Layouts (`views/layouts/`)
+
+A layout extends a template and fills in its `{% block %}` regions with page-specific structure. Each layout represents one type of page — for example a full-width landing page, a two-column blog post, or a contact page.
+
+- **Layouts are the only way to create pages in Blutui.** Every page a content editor creates in the dashboard must be backed by a layout file.
+- When an editor creates a page, they pick a layout from a list. Every layout file a developer adds becomes a new option in that list.
+- **Never create a `pages/` directory.** All page content belongs in `views/layouts/`.
+- When referencing a layout in any Blutui MCP tool (`layout`, `post_layout`, `blog_layout`), the path must be relative to `views/` — e.g. `layouts/about.html`, not `views/layouts/about.html`.
 
 ### Page Creation Workflow
 
@@ -34,7 +41,7 @@ Follow these steps every time a new page is needed:
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {{ include('components/hero.html') }}
 
   <section>

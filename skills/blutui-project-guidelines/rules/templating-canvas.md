@@ -2,13 +2,13 @@
 title: Canvas
 impact: CRITICAL
 impactDescription: High Impact (90%) - The Template Engine serves as the critical logic layer, binding HTML elements to Blutui-specific concepts. Strict adherence to this syntax is mandatory for data interactivity; without it, the project will fail to render or process dynamic data.
-tags: canvas, variables, tags, filters, functions, tests, expressions, templating festures
+tags: canvas, variables, tags, filters, functions, tests, expressions, templating features
 ---
 
 Canvas serves as the template engine for Blutui, combining HTML, CSS, and JavaScript with unique Canvas logic to create fully customized project designs.
 
 - The template is a regular text file. It can generate any text-based format (HTML, XML, CSV, LaTeX, etc.). The file extension is ".canvas".
-- A template contains variables, tags, filters, functions, tests, expressions and other templating festures, which get replaced with values when the template is evaluated, and tags, which control the template's logic.
+- A template contains variables, tags, filters, functions, tests, expressions and other templating features, which get replaced with values when the template is evaluated.
 
 **Example**
 
@@ -21,7 +21,7 @@ Canvas serves as the template engine for Blutui, combining HTML, CSS, and JavaSc
 
   <body>
     <ul id="navigation">
-      {% for item in navigation>%}
+      {% for item in navigation %}
         <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
       {% endfor %}
     </ul>
@@ -100,7 +100,7 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/defualt.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
 **Example**: Define a base.html template for a two-column page.
 
@@ -205,4 +205,22 @@ Layout (`views/layouts/about.html`):
 {% endblock %}
 ```
 
-Reference: [Link to documentation](https://dev.blutui.com/guides/what-is-blutui-canvas)
+### Image URLs
+
+Use the `image_url()` filter to optimise images served from Blutui. Always prefer `webp` format and set an explicit width:
+
+```canvas
+<img src="{{ entry.image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ entry.title }}">
+```
+
+Available options:
+
+| Option   | Values                    | Description                        |
+| -------- | ------------------------- | ---------------------------------- |
+| `width`  | integer (px)              | Resize to this width               |
+| `height` | integer (px)              | Resize to this height              |
+| `format` | `webp`, `jpg`, `png`      | Convert to this format             |
+
+Never render a raw image URL from a collection or blog field without passing it through `image_url()`.
+
+Reference: [Link to documentation](https://docs.blutui.com/guides/what-is-blutui-canvas)

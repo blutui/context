@@ -44,4 +44,42 @@ Before generating any HTML or component code, the agent must detect the project'
 - If no style system is detected, **ask the user** which style approach they want before generating any HTML.
 - Never generate unstyled or bare HTML when a style system is available in the project.
 
+### Migrating a `pages/` Directory
+
+If a `pages/` directory is found in the project, every file in it must be migrated to the Blutui layout system. Follow this sequence for **each file**:
+
+#### URL Mapping
+
+The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
+
+| `pages/` file | Layout file path | Registered URL |
+| ------------- | ---------------- | -------------- |
+| `index.html` | `views/layouts/home.html` | `/` |
+| `about.html` | `views/layouts/about.html` | `/about` |
+| `contact.html` | `views/layouts/contact.html` | `/contact` |
+
+**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.html` (or another descriptive name) to avoid confusion.
+
+#### Migration Steps (repeat for each file)
+
+1. **Create the layout file** — Copy the page content into the correct path from the table above. Wrap it in the template inheritance structure:
+
+```canvas
+{% extends 'templates/default.html' %}
+
+{% block body %}
+  {# content from the original page file goes here #}
+{% endblock %}
+```
+
+2. **Register via MCP** — Run `list_pages` to confirm no conflict, then call `create_page` with:
+   - `layout` path relative to `views/` (e.g. `layouts/home.html`)
+   - `url` set to the correct registered URL (e.g. `/` for the homepage)
+
+3. **Delete the original file immediately** — Do not proceed to the next file until the current file has been deleted from `pages/`. This step is mandatory, not optional.
+
+4. **After all files are migrated** — Delete the `pages/` directory itself.
+
+**The migration is not complete until the `pages/` directory no longer exists.** If the migration cannot finish in one pass, notify the user of exactly which files remain and their target layout paths.
+
 Reference: [Link to documentation](https://docs.blutui.com/docs/getting-started/folder-structure)

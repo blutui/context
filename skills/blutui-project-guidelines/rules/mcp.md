@@ -1,42 +1,91 @@
 ---
 title: MCP
 impact: HIGH
-impactDescription: Efficiency Multiplier - The Blutui MCP grants agents direct access to project-specific tooling, streamlining complex workflows and increasing development velocity by up to 300%.
+impactDescription: Efficiency Multiplier - The Blutui MCP grants agents direct access to project-specific tooling, streamlining complex workflows and increasing development velocity.
 tags: mcp, tools, search, documentation
 ---
 
 ## Blutui MCP
 
-### Available MCP tools
+### Available Tools
 
-- The `list_*` tools (such as `list_pages`, `list_forms`, etc.) can be used to list all the different resources available within the project.
-- The `retrieve_*` tools (such as `retrieve_page`, `retrieve_forms`, etc.) can be used to retrieve a single resources within the project.
-- The `create_*` tools (such as `create_page`, `create_form`, etc.) can be used to create new resources within the project.
+**Create**
 
-### Page Creation Workflow
+| Tool | Description |
+| ---- | ----------- |
+| `create_blog` | Create a blog |
+| `create_collection` | Create a collection |
+| `create_collection_entry` | Create a collection entry |
+| `create_form` | Create a form |
+| `create_link` | Create a link between collections |
+| `create_menu` | Create a menu |
+| `create_page` | Create a page |
+| `create_post` | Create a blog post |
+| `create_redirect` | Create a redirect |
+| `create_route_pattern` | Create a route pattern |
+| `create_webhook` | Create a webhook |
 
-When creating a new page, the agent must follow this exact sequence:
+**The MCP does not expose `update_*` or `delete_*` tools.** To modify or remove an existing resource, the user must do it from the Blutui dashboard. Do not attempt to update or delete resources via MCP — instruct the user to make the change in the dashboard instead.
 
-1. **Create the layout file** in `views/layouts/` (e.g., `views/layouts/about.html`). The layout should extend a template and include components.
-2. **Run `list_pages`** to check for existing pages and avoid duplicates.
-3. **Use the `create_page` MCP tool** to register the page in the Blutui dashboard, setting the layout path relative to `views/` (e.g., `layouts/about.html`).
+**List**
 
-The agent must never skip the MCP step. A layout file without a corresponding page in the dashboard will not be accessible on the site.
+| Tool | Description |
+| ---- | ----------- |
+| `list_blogs` | List all blogs |
+| `list_collections` | List all collections |
+| `list_collection_entries` | List all entries in a collection |
+| `list_forms` | List all forms |
+| `list_links` | List all collection links |
+| `list_menus` | List all menus |
+| `list_pages` | List all pages |
+| `list_posts` | List all blog posts |
+| `list_redirects` | List all redirects |
+| `list_route_patterns` | List all route patterns |
+| `list_submissions` | List all form submissions |
+| `list_webhooks` | List all webhooks |
 
-### Search Documentation (Critically Important)
+**Retrieve**
 
-- Blutui Courier MCP comes with a powerful `search_blutui_documentation` tool you should use before any other approaches.
-- You must use this tool to search the Blutui documentation before falling back to other approaches.
-- Search the documentation before making code changes to ensure we are taking the correct approach.
+| Tool | Description |
+| ---- | ----------- |
+| `retrieve_blog` | Retrieve a blog |
+| `retrieve_collection` | Retrieve a collection |
+| `retrieve_collection_entry` | Retrieve a collection entry |
+| `retrieve_form` | Retrieve a form |
+| `retrieve_link` | Retrieve a collection link |
+| `retrieve_menu` | Retrieve a menu |
+| `retrieve_page` | Retrieve a page |
+| `retrieve_post` | Retrieve a blog post |
+| `retrieve_redirect` | Retrieve a redirect |
+| `retrieve_route_pattern` | Retrieve a route pattern |
+| `retrieve_submission` | Retrieve a form submission |
+| `retrieve_webhook` | Retrieve a webhook |
 
-### Handle Property Standards
+**Utility**
 
-- **Pre-flight Check:** For the `create_page`, `create_form` or `create_menu` tool, always execute the corresponding `list_*` tool first.
-- **Validation:** Compare the user's desired `handle` against the `handle` properties in the retrieved list.
-- **Error Prevention:** If a match is found, do not call the creation tool. Instead, notify the user of the conflict.
-- **Offline Mode:** If the `blutui` MCP tools are unreachable, you must ask the user for the specific `handle` property in the before suggesting a configuration.
+| Tool | Description |
+| ---- | ----------- |
+| `search_blutui_documentation` | Search the Blutui documentation |
+
+### Setup
+
+Before MCP tools are available, the user must run `courier mcp init` once. After that, the MCP server starts automatically whenever Courier is running.
+
+```bash
+courier mcp init   # one-time setup
+```
+
+If MCP tools are unreachable, prompt the user to run `courier mcp init` and ensure Courier is running.
+
+### Handle Validation (Pre-flight Rule)
+
+Before calling any `create_*` tool, always run the corresponding `list_*` tool first and check that the desired handle does not already exist. If a conflict is found, notify the user instead of proceeding.
+
+If the MCP tools are unreachable, ask the user for the specific `handle` before suggesting any configuration.
+
+### Search Documentation First
+
+Use `search_blutui_documentation` before making code changes to confirm the correct approach. Do not fall back to guessing or prior knowledge when the docs can answer the question.
 
 Reference:
-
 - [Link to documentation - Connect to Blutui MCP](https://docs.blutui.com/docs/getting-started/agentic-development)
-- [Link to documentation - Connect to Figma MCP](https://dev.blutui.com/guides/figma-to-blutui)

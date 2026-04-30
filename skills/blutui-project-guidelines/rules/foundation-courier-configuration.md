@@ -20,4 +20,4 @@ The `cassette` property determines which project version is active.
 
 After making changes to the `courier.json`, instruct user to restart their `courier dev` session or the Blutui MCP server if it's running.
 
-Reference: [Courier configuration](https://dev.blutui.com/docs/courier/configuration)
+Reference: [Courier configuration](https://docs.blutui.com/docs/courier/configuration)

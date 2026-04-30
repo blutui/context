@@ -1,244 +1,5 @@
-# Blutui Project Guidelines
+<blutui-project-guidelines>
 
----
-
-## Table of Contents
-
-0. [Section 0](#0-section-0)
-   - 0.1 [Canopy](#01-canopy)
-   - 0.2 [Cassettes - Project Version Control](#02-cassettes---project-version-control)
-   - 0.3 [Collections](#03-collections)
-   - 0.4 [Courier](#04-courier)
-   - 0.5 [Form Standards](#05-form-standards)
-   - 0.6 [MCP](#06-mcp)
-   - 0.7 [Routing Pattern Standards](#07-routing-pattern-standards)
-1. [Foundation](#1-foundation)
-   - 1.1 [Courier Configuration](#11-courier-configuration)
-   - 1.2 [File Structure](#12-file-structure)
-   - 1.3 [Templates and Layouts](#13-templates-and-layouts)
-2. [Templating](#2-templating)
-   - 2.1 [Canvas](#21-canvas)
-   - 2.2 [Including other templates](#22-including-other-templates)
-
----
-
-## 0. Section 0
-
-### 0.1 Canopy
-
-## Canopy
-
-Canopy is Blutui's in-page editor that enables developers to construct the website's structure and allow content managers to edit pages directly within the interface.
-
-Canopy functions enable a developer to add editing capabilities for a variety of elements in a project. For example editing text, lists, images, videos, buttons, audios and headings.
-
-Use the search_blutui_documentation mcp tool to access the canopy functions that can be used in a project.
-
-Reference: [Link to documentation](https://docs.blutui.com/docs/canopy/getting-started)
-
-### 0.2 Cassettes - Project Version Control
-
-## Cassettes
-
-Blutui Cassettes function as a version control system for your front-end logic, allowing you to manage and toggle between various website designs within a single project.
-
-Each project can have multiple cassettes.
-
-To switch cassettes, update the cassette property within the `courier.json` file. If this property is missing or undefined, prompt the user to provide the specific cassette handle.
-
-Reference: [Link to documentation](https://dev.blutui.com/docs/cassettes/getting-started)
-
-### 0.3 Collections
-
-## Collections
-
-Collections are the primary method for managing structured data within Blutui that define reusable data schemas using a wide range of field types.
-
-- Unique handles are mandatory for all collections. The agent must validate handle availability before initiating the creation process.
-- The available field types are: "text", "textarea", "richtext", "checkbox", "radio", "select", "email", "phone", "url", "date", "time", "date-time", "color", "file", "number"
-- Do not add custom field types.
-
-Collections are designed for structured data modeling. Implement a Collection whenever you need to store multiple entries that share a consistent architecture (e.g., matching keys or data types) to ensure efficient querying and rendering.
-
-In the case, when a collection has a some connection to another collection, the agent can look into linking collections using the search_blutui_documentation mcp tool.
-
-To create, retreive and list collection or collection entries or links, the agent must utilize the tools present in Blutui MCP.
-
-### Connect collection data in a template
-
-```canvas
-{% set authors = cms.collection('authors') %}
-{% set author = authors | first %}
-<div class="author-section">
-  <img
-    src="{{ author.avatar }}"
-    alt="{{ author.name }}"
-  >
-  <p>
-    <strong>{{ author.name }}</strong>
-  </p>
-  <div>
-    {{ author.bio | raw }}
-  </div>
-</div>
-```
-
-Reference: [Link to documentation](https://dev.blutui.com/docs/collections/getting-started)
-
-### 0.4 Courier
-
-## Courier
-
-Courier is a command-line interface tool to interact with a project. It allows user's to easily push code to their project and pull code down to their machine.
-
-- Courier includes the Blutui MCP server that comes with powerful tools designed specifically for this project.
-
-Courier must be installed and configured on the user's machine to enable full functionality. `courier version` command can be used to check if the user has courier installed.
-
-Reference: [Link to documentation](https://dev.blutui.com/docs/courier/getting-started)
-
-### 0.5 Form Standards
-
-## Blutui Form standards and examples
-
-### Directory Structure
-
-Ensure your `views` directory is organized as follows:
-
-- `views/`
-  - `components/`
-    - `form.html` (Macro definitions)
-  - `forms/`
-    - `contact.html` (Form implementation)
-
-#### Usage Example (in `views/components/form.html`):
-
-```canvas
-{% macro input(data) %}
-  <input type="{{ data.type }}" name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %} />
-{% endmacro %}
-
-{% macro field(data) %}
-  <div class="field-wrapper">
-    <label>{{ data.label }}</label>
-    {% if data.type == 'textarea' %}
-      {{ _self.textarea(data) }}
-    {% else %}
-      {{ _self.input(data) }}
-    {% endif %}
-  </div>
-{% endmacro %}
-```
-
-#### Usage Example (in `views/forms/contact.html`):
-
-```canvas
-{% import 'components/form' as ui %}
-
-{% form 'contact' %}
-  {% for field in form.fields %}
-    {{ ui.field(field) }}
-  {% endfor %}
-
-  <button type="submit" class="">Submit</button>
-{% endform %}
-```
-
-### Form Field Constraints
-
-- **Allowed Types:** "text", "textarea", "radio", "select", "checkbox", "url", "email", "phone", "hidden", "time", "date", "number"
-- Do not attempt to use custom field types. If a type is not on this list, default to `text` and notify the user.
-- Always transmit field types to the MCP in lowercase format.
-
-Reference: [Link to documentation](https://dev.blutui.com/guides/create-form)
-
-### 0.6 MCP
-
-## Blutui MCP
-
-### Available MCP tools
-
-- The `list_*` tools (such as `list_pages`, `list_forms`, etc.) can be used to list all the different resources available within the project.
-- The `retrieve_*` tools (such as `retrieve_page`, `retrieve_forms`, etc.) can be used to retrieve a single resources within the project.
-- The `create_*` tools (such as `create_page`, `create_form`, etc.) can be used to create new resources within the project.
-
-### Page Creation Workflow
-
-When creating a new page, the agent must follow this exact sequence:
-
-1. **Create the layout file** in `views/layouts/` (e.g., `views/layouts/about.html`). The layout should extend a template and include components.
-2. **Run `list_pages`** to check for existing pages and avoid duplicates.
-3. **Use the `create_page` MCP tool** to register the page in the Blutui dashboard, setting the layout path relative to `views/` (e.g., `layouts/about.html`).
-
-The agent must never skip the MCP step. A layout file without a corresponding page in the dashboard will not be accessible on the site.
-
-### Search Documentation (Critically Important)
-
-- Blutui Courier MCP comes with a powerful `search_blutui_documentation` tool you should use before any other approaches.
-- You must use this tool to search the Blutui documentation before falling back to other approaches.
-- Search the documentation before making code changes to ensure we are taking the correct approach.
-
-### Handle Property Standards
-
-- **Pre-flight Check:** For the `create_page`, `create_form` or `create_menu` tool, always execute the corresponding `list_*` tool first.
-- **Validation:** Compare the user's desired `handle` against the `handle` properties in the retrieved list.
-- **Error Prevention:** If a match is found, do not call the creation tool. Instead, notify the user of the conflict.
-- **Offline Mode:** If the `blutui` MCP tools are unreachable, you must ask the user for the specific `handle` property in the before suggesting a configuration.
-
-Reference:
-
-- [Link to documentation - Connect to Blutui MCP](https://docs.blutui.com/docs/getting-started/agentic-development)
-- [Link to documentation - Connect to Figma MCP](https://dev.blutui.com/guides/figma-to-blutui)
-
-### 0.7 Routing Pattern Standards
-
-## Routing Pattern Standard
-
-The agent must pay attention to route patterns when the project would require to build many pages that will include more than one nested page.
-
-- A route pattern could include parameter(s) (e.g., `/team/:name`), which is accessed in code via `route.data.name`.
-- The supported parameter types: string, slug, date, time, number.
-- Each unique route pattern is mapped to a single template file.
-
-Route patterns can be utilised to filter collections as shown below:
-
-```canvas
-{% set members = cms.collection('team') %}
-{% set member = members | filter(entry => (entry.name | slug) == route.data.name) | first %}
-<h1>{{ member.name }}</h1>
-<p>{{ member.bio }}</p>
-```
-
-Use Blutui MCP tools to create, retreive and list route patterns.
-
-When using the create_route-pattern tool, the agent must use the list_route-patterns tool and determine a unique route pattern.
-
-Reference: [Link to documentation - How do I use route patterns in my project?](https://docs.blutui.com/guides/add-route-patterns)
-
----
-
-## 1. Foundation
-
-### 1.1 Courier Configuration
-
-The `handle` property is **required** and specifies the unique identifier for the Blutui project. Always prompt the user for it, never guess or fabricate.
-
-The `cassette` property determines which project version is active.
-
-**Minimal config:**
-
-```json
-{
-  "cassette": "default",
-  "handle": "project-handle"
-}
-```
-
-After making changes to the `courier.json`, instruct user to restart their `courier dev` session or the Blutui MCP server if it's running.
-
-Reference: [Courier configuration](https://dev.blutui.com/docs/courier/configuration)
-
-### 1.2 File Structure
 
 ## File structure
 
@@ -279,23 +40,69 @@ Before generating any HTML or component code, the agent must detect the project'
 - If no style system is detected, **ask the user** which style approach they want before generating any HTML.
 - Never generate unstyled or bare HTML when a style system is available in the project.
 
+### Migrating a `pages/` Directory
+
+If a `pages/` directory is found in the project, every file in it must be migrated to the Blutui layout system. Follow this sequence for **each file**:
+
+#### URL Mapping
+
+The filename in `pages/` determines the route it serves. Use this mapping to derive the correct layout path and registered URL:
+
+| `pages/` file | Layout file path | Registered URL |
+| ------------- | ---------------- | -------------- |
+| `index.html` | `views/layouts/home.html` | `/` |
+| `about.html` | `views/layouts/about.html` | `/about` |
+| `contact.html` | `views/layouts/contact.html` | `/contact` |
+
+**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.html` (or another descriptive name) to avoid confusion.
+
+#### Migration Steps (repeat for each file)
+
+1. **Create the layout file** — Copy the page content into the correct path from the table above. Wrap it in the template inheritance structure:
+
+```canvas
+{% extends 'templates/default.html' %}
+
+{% block body %}
+  {# content from the original page file goes here #}
+{% endblock %}
+```
+
+2. **Register via MCP** — Run `list_pages` to confirm no conflict, then call `create_page` with:
+   - `layout` path relative to `views/` (e.g. `layouts/home.html`)
+   - `url` set to the correct registered URL (e.g. `/` for the homepage)
+
+3. **Delete the original file immediately** — Do not proceed to the next file until the current file has been deleted from `pages/`. This step is mandatory, not optional.
+
+4. **After all files are migrated** — Delete the `pages/` directory itself.
+
+**The migration is not complete until the `pages/` directory no longer exists.** If the migration cannot finish in one pass, notify the user of exactly which files remain and their target layout paths.
+
 Reference: [Link to documentation](https://docs.blutui.com/docs/getting-started/folder-structure)
 
-### 1.3 Templates and Layouts
+---
+
 
 ## Layouts and Templates
 
-### Templates
+Blutui uses two distinct layers to build pages. Understanding the difference is critical — they serve different audiences and must not be confused.
 
-- A template defines the overall structure of the project, including common elements like headers, footers, and navigation menus used to provide a consistent look and feel across multiple pages in a project.
-- A template can be extended by another template file but not a layout.
+### Templates (`views/templates/`)
 
-### Layouts
+A template is the **outer HTML shell** of the site — the `<html>`, `<head>`, global scripts, and any elements that appear on every single page (e.g. a site-wide `<nav>` or `<footer>`). Templates use `{% block %}` tags to mark regions where layouts can inject page-specific content.
 
-- Layouts are the **only** way to create pages in Blutui. Each layout file in `views/layouts/` corresponds to a page created via the Blutui dashboard or MCP tools.
-- **Never create files in a `pages/` directory.** The `pages/` directory must be ignored entirely. All page content lives in layout files.
-- When using the `layout`, `template`, `post_layout` or `blog_layout` parameters in any Blutui MCP tool, make sure the layout file path is relative to the `views` directory (e.g., `layouts/about.html`, not `views/layouts/about.html`).
-- Always place layout files in the `views/layouts` directory.
+- Developers write and maintain templates. **Editors never see or interact with templates directly.**
+- A template can extend another template, but layouts cannot extend each other.
+- Think of a template as infrastructure — it changes rarely and affects every page at once.
+
+### Layouts (`views/layouts/`)
+
+A layout extends a template and fills in its `{% block %}` regions with page-specific structure. Each layout represents one type of page — for example a full-width landing page, a two-column blog post, or a contact page.
+
+- **Layouts are the only way to create pages in Blutui.** Every page a content editor creates in the dashboard must be backed by a layout file.
+- When an editor creates a page, they pick a layout from a list. Every layout file a developer adds becomes a new option in that list.
+- **Never create a `pages/` directory.** All page content belongs in `views/layouts/`.
+- When referencing a layout in any Blutui MCP tool (`layout`, `post_layout`, `blog_layout`), the path must be relative to `views/` — e.g. `layouts/about.html`, not `views/layouts/about.html`.
 
 ### Page Creation Workflow
 
@@ -312,7 +119,7 @@ Follow these steps every time a new page is needed:
 ```canvas
 {% extends 'templates/default.html' %}
 
-{% block content %}
+{% block body %}
   {{ include('components/hero.html') }}
 
   <section>
@@ -328,14 +135,31 @@ Reference: [How to create a layout](https://docs.blutui.com/guides/create-layout
 
 ---
 
-## 2. Templating
 
-### 2.1 Canvas
+The `handle` property is **required** and specifies the unique identifier for the Blutui project. Always prompt the user for it, never guess or fabricate.
+
+The `cassette` property determines which project version is active.
+
+**Minimal config:**
+
+```json
+{
+  "cassette": "default",
+  "handle": "project-handle"
+}
+```
+
+After making changes to the `courier.json`, instruct user to restart their `courier dev` session or the Blutui MCP server if it's running.
+
+Reference: [Courier configuration](https://docs.blutui.com/docs/courier/configuration)
+
+---
+
 
 Canvas serves as the template engine for Blutui, combining HTML, CSS, and JavaScript with unique Canvas logic to create fully customized project designs.
 
 - The template is a regular text file. It can generate any text-based format (HTML, XML, CSV, LaTeX, etc.). The file extension is ".canvas".
-- A template contains variables, tags, filters, functions, tests, expressions and other templating festures, which get replaced with values when the template is evaluated, and tags, which control the template's logic.
+- A template contains variables, tags, filters, functions, tests, expressions and other templating features, which get replaced with values when the template is evaluated.
 
 **Example**
 
@@ -348,7 +172,7 @@ Canvas serves as the template engine for Blutui, combining HTML, CSS, and JavaSc
 
   <body>
     <ul id="navigation">
-      {% for item in navigation>%}
+      {% for item in navigation %}
         <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
       {% endfor %}
     </ul>
@@ -427,7 +251,7 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/defualt.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
 **Example**: Define a base.html template for a two-column page.
 
@@ -532,9 +356,28 @@ Layout (`views/layouts/about.html`):
 {% endblock %}
 ```
 
-Reference: [Link to documentation](https://dev.blutui.com/guides/what-is-blutui-canvas)
+### Image URLs
 
-### 2.2 Including other templates
+Use the `image_url()` filter to optimise images served from Blutui. Always prefer `webp` format and set an explicit width:
+
+```canvas
+<img src="{{ entry.image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ entry.title }}">
+```
+
+Available options:
+
+| Option   | Values                    | Description                        |
+| -------- | ------------------------- | ---------------------------------- |
+| `width`  | integer (px)              | Resize to this width               |
+| `height` | integer (px)              | Resize to this height              |
+| `format` | `webp`, `jpg`, `png`      | Convert to this format             |
+
+Never render a raw image URL from a collection or blog field without passing it through `image_url()`.
+
+Reference: [Link to documentation](https://docs.blutui.com/guides/what-is-blutui-canvas)
+
+---
+
 
 The `include` function is useful to include a template and return the rendered content of that template into the current one.
 
@@ -566,3 +409,705 @@ Use `include` to pull reusable components from the `views/components/` directory
 ```
 
 ---
+
+
+## Blutui MCP
+
+### Available Tools
+
+**Create**
+
+| Tool | Description |
+| ---- | ----------- |
+| `create_blog` | Create a blog |
+| `create_collection` | Create a collection |
+| `create_collection_entry` | Create a collection entry |
+| `create_form` | Create a form |
+| `create_link` | Create a link between collections |
+| `create_menu` | Create a menu |
+| `create_page` | Create a page |
+| `create_post` | Create a blog post |
+| `create_redirect` | Create a redirect |
+| `create_route_pattern` | Create a route pattern |
+| `create_webhook` | Create a webhook |
+
+**The MCP does not expose `update_*` or `delete_*` tools.** To modify or remove an existing resource, the user must do it from the Blutui dashboard. Do not attempt to update or delete resources via MCP — instruct the user to make the change in the dashboard instead.
+
+**List**
+
+| Tool | Description |
+| ---- | ----------- |
+| `list_blogs` | List all blogs |
+| `list_collections` | List all collections |
+| `list_collection_entries` | List all entries in a collection |
+| `list_forms` | List all forms |
+| `list_links` | List all collection links |
+| `list_menus` | List all menus |
+| `list_pages` | List all pages |
+| `list_posts` | List all blog posts |
+| `list_redirects` | List all redirects |
+| `list_route_patterns` | List all route patterns |
+| `list_submissions` | List all form submissions |
+| `list_webhooks` | List all webhooks |
+
+**Retrieve**
+
+| Tool | Description |
+| ---- | ----------- |
+| `retrieve_blog` | Retrieve a blog |
+| `retrieve_collection` | Retrieve a collection |
+| `retrieve_collection_entry` | Retrieve a collection entry |
+| `retrieve_form` | Retrieve a form |
+| `retrieve_link` | Retrieve a collection link |
+| `retrieve_menu` | Retrieve a menu |
+| `retrieve_page` | Retrieve a page |
+| `retrieve_post` | Retrieve a blog post |
+| `retrieve_redirect` | Retrieve a redirect |
+| `retrieve_route_pattern` | Retrieve a route pattern |
+| `retrieve_submission` | Retrieve a form submission |
+| `retrieve_webhook` | Retrieve a webhook |
+
+**Utility**
+
+| Tool | Description |
+| ---- | ----------- |
+| `search_blutui_documentation` | Search the Blutui documentation |
+
+### Setup
+
+Before MCP tools are available, the user must run `courier mcp init` once. After that, the MCP server starts automatically whenever Courier is running.
+
+```bash
+courier mcp init   # one-time setup
+```
+
+If MCP tools are unreachable, prompt the user to run `courier mcp init` and ensure Courier is running.
+
+### Handle Validation (Pre-flight Rule)
+
+Before calling any `create_*` tool, always run the corresponding `list_*` tool first and check that the desired handle does not already exist. If a conflict is found, notify the user instead of proceeding.
+
+If the MCP tools are unreachable, ask the user for the specific `handle` before suggesting any configuration.
+
+### Search Documentation First
+
+Use `search_blutui_documentation` before making code changes to confirm the correct approach. Do not fall back to guessing or prior knowledge when the docs can answer the question.
+
+Reference:
+- [Link to documentation - Connect to Blutui MCP](https://docs.blutui.com/docs/getting-started/agentic-development)
+
+---
+
+
+## Courier
+
+Courier is the command-line interface for interacting with a Blutui project. It pushes code to the platform, pulls code down to the local machine, and bundles the Blutui MCP server.
+
+Courier must be installed and configured on the user's machine. Run `courier version` to confirm it is installed.
+
+### Common Commands
+
+| Command | Description |
+| ------- | ----------- |
+| `courier version` | Print the installed Courier version |
+| `courier login` | Authenticate Courier against the user's Blutui account |
+| `courier init` | Initialise Courier inside an existing project directory |
+| `courier create` | Scaffold a new Blutui project |
+| `courier dev` | Start the local development server with file watching |
+| `courier push` | Push local `views/` and `public/` changes up to the platform |
+| `courier pull` | Pull the latest project code down from the platform |
+| `courier open` | Open the project in the Blutui dashboard |
+| `courier mcp init` | One-time setup for the Blutui MCP server (the server then starts automatically whenever Courier is running) |
+
+Courier only syncs the `public/` and `views/` directories — files outside those directories are ignored by `push` and `pull`.
+
+Reference: [Link to documentation](https://docs.blutui.com/docs/courier/getting-started)
+
+---
+
+
+## Cassettes
+
+Cassettes function as a version control system for the front-end logic of a Blutui project. Each project can have multiple cassettes, allowing the developer to manage and toggle between different website designs within a single project.
+
+### Switching Cassettes
+
+Update the `cassette` property in `courier.json` to switch the active cassette. If the property is missing or undefined, prompt the user for the specific cassette handle.
+
+### Active Cassette Safety
+
+**Never develop directly on an active (live) cassette.** The recommended workflow is:
+
+1. Duplicate the active cassette in the dashboard.
+2. Switch the local `cassette` value in `courier.json` to the new duplicate.
+3. Make changes against the duplicate.
+4. Promote it back to active when ready.
+
+When pushing changes to an active cassette directly, Courier will refuse the operation unless the `--allow-active` flag is passed. Do not use `--allow-active` without explicit user confirmation — it bypasses the safety check and can break a live site immediately.
+
+### Canopy Content Across Cassettes
+
+**Important:** Canopy elements with the same `name` (handle) share content across cassettes. Renaming or duplicating a cassette does not duplicate the underlying Canopy content — both cassettes will read and write the same value. To isolate content between cassettes, use a different handle in the new cassette's templates.
+
+Reference: [Link to documentation](https://docs.blutui.com/docs/cassettes/getting-started)
+
+---
+
+
+## Collections
+
+Collections are the primary method for managing structured data within Blutui that define reusable data schemas using a wide range of field types.
+
+- Unique handles are mandatory for all collections. The agent must validate handle availability before initiating the creation process.
+- The available field types are: "text", "textarea", "richtext", "checkbox", "radio", "select", "email", "phone", "url", "date", "time", "date-time", "color", "file", "number"
+- Do not add custom field types.
+
+Collections are designed for structured data modeling. Implement a Collection whenever you need to store multiple entries that share a consistent architecture (e.g., matching keys or data types) to ensure efficient querying and rendering.
+
+In the case, when a collection has a some connection to another collection, the agent can look into linking collections using the search_blutui_documentation mcp tool.
+
+**MCP tools for collections:** `list_collections` → `create_collection`, `list_collection_entries` → `create_collection_entry`. For linking two collections: `list_links` → `create_link`. Always run the `list_*` tool first to validate handles before creating.
+
+### Connect collection data in a template
+
+```canvas
+{% set authors = cms.collection('authors') %}
+{% set author = authors | first %}
+<div class="author-section">
+  <img
+    src="{{ author.avatar | image_url({ width: 400, format: 'webp' }) }}"
+    alt="{{ author.name }}"
+  >
+  <p>
+    <strong>{{ author.name }}</strong>
+  </p>
+  <div>
+    {{ author.bio | raw }}
+  </div>
+</div>
+```
+
+### Common Filters
+
+#### Sorting
+
+Collections with an `order` field should be sorted before rendering. Use the spaceship operator `<=>` for numeric comparison:
+
+```canvas
+{% set items = cms.collection('features') | sort((a, b) => a.order <=> b.order) %}
+```
+
+Sort by a date field (descending):
+
+```canvas
+{% set posts = cms.collection('news') | sort_by('publish_date', true) %}
+```
+
+#### Limiting Results
+
+```canvas
+{% set featured = cms.collection('people') | slice(0, 3) %}
+```
+
+#### Filtering by a Field
+
+```canvas
+{% set member = cms.collection('team') | filter(entry => (entry.name | slug) == route.data.name) | first %}
+```
+
+#### Image Optimisation
+
+Always transform image fields with `| image_url()` — never render raw image URLs:
+
+```canvas
+<img src="{{ entry.image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ entry.title }}">
+```
+
+Available options: `width`, `height`, `format` (`webp`, `jpg`, `png`).
+
+#### Rich Text Fields
+
+Richtext fields must use `| raw` to render HTML correctly. Without it the HTML tags will appear as escaped text:
+
+```canvas
+<div>{{ entry.body | raw }}</div>
+```
+
+### Collection Conventions
+
+- Add an `order` (number) field to any collection that needs manual ordering.
+- Use the `| slug` filter when matching a collection entry to a route parameter.
+
+Reference: [Link to documentation](https://docs.blutui.com/docs/collections/getting-started)
+
+---
+
+
+## Blog
+
+Blutui blogs use automatic routing — **no route patterns or page registrations are needed**. Create the layout files and register the blog via MCP. Blutui handles all routing automatically.
+
+### File Structure
+
+```
+views/
+  layouts/
+    blogs/
+      index.html   # Blog listing page
+      post.html    # Individual post page
+```
+
+If you have multiple blogs with different designs, use separate folders:
+
+```
+views/layouts/news/
+views/layouts/events/
+```
+
+Each blog can have its own `index.html` and `post.html` layouts.
+
+### Blog Index Layout (`index.html`)
+
+On the index page the `blog` object is automatically available. Use `blog.posts` to loop through posts.
+
+```canvas
+{% extends 'templates/default.html' %}
+
+{% block body %}
+<div>
+  <h1>{{ blog.name }}</h1>
+
+  {% for post in blog.posts | sort((a, b) => b.publish_date <=> a.publish_date) %}
+    <div>
+      <img src="{{ post.cover_image | image_url({ width: 800, format: 'webp' }) }}" alt="{{ post.title }}">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.description }}</p>
+      <p>{{ post.publish_date | date('d M Y') }}</p>
+      <p>{{ post.author }}</p>
+      <p>{{ post.content | reading_time }} reading time</p>
+      <a href="{{ post.slug }}">Read more</a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+```
+
+**`blog` object fields:**
+
+| Field              | Description        |
+| ------------------ | ------------------ |
+| `blog.name`        | Blog name          |
+| `blog.slug`        | Blog slug          |
+| `blog.uri`         | Blog URI path      |
+| `blog.description` | Blog description   |
+| `blog.posts`       | Array of all posts |
+
+### Post Layout (`post.html`)
+
+On the post page the `post` object is automatically available.
+
+```canvas
+{% extends 'templates/default.html' %}
+
+{% block body %}
+<div>
+  <h1>{{ post.title }}</h1>
+  <h3>{{ post.description }}</h3>
+  <p>{{ post.publish_date | date('d M Y') }}</p>
+  <p>{{ post.author }}</p>
+  <p>{{ post.content | reading_time }} reading time</p>
+  <img src="{{ post.cover_image | image_url({ width: 1200, format: 'webp' }) }}" alt="{{ post.title }}">
+  <div>{{ post.content | raw }}</div>
+</div>
+{% endblock %}
+```
+
+**`post` object fields:**
+
+| Field               | Description                           |
+| ------------------- | ------------------------------------- | ------- |
+| `post.title`        | Post title                            |
+| `post.description`  | Short description                     |
+| `post.content`      | Rich text body — render with `        | raw`    |
+| `post.cover_image`  | Cover image URL                       |
+| `post.publish_date` | Publication date — format with `      | date()` |
+| `post.author`       | Author name                           |
+| `post.slug`         | Post URL — use directly in `<a href>` |
+
+### MCP Workflow
+
+1. Create `views/layouts/blogs/index.html` and `views/layouts/blogs/post.html`.
+2. Run `list_blogs` to check for an existing blog with the same handle.
+3. Use `create_blog` — set the **index layout** to `layouts/blogs/index.html` and **post layout** to `layouts/blogs/post.html`.
+4. Run `list_posts` → use `create_post` to add posts to the blog.
+
+Do **not** call `create_page` or `create_route_pattern` — routing is handled automatically by Blutui.
+
+Reference: [Link to documentation](https://docs.blutui.com/guides/create-blog)
+
+---
+
+
+## Blutui Form standards and examples
+
+### Directory Structure
+
+Ensure your `views` directory is organized as follows:
+
+- `views/`
+  - `components/`
+    - `form.html` (Macro definitions)
+  - `forms/`
+    - `contact.html` (Form implementation)
+
+#### Usage Example (in `views/components/form.html`):
+
+```canvas
+{% macro input(data) %}
+  <input type="{{ data.type }}" name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %} />
+{% endmacro %}
+
+{% macro textarea(data) %}
+  <textarea name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %}></textarea>
+{% endmacro %}
+
+{% macro select(data) %}
+  <select name="{{ data.name }}" {% if data.required %} required {% endif %}>
+    {% for option in data.options %}
+      <option value="{{ option.value }}">{{ option.label }}</option>
+    {% endfor %}
+  </select>
+{% endmacro %}
+
+{% macro errors(data) %}
+  {% if data.errors %}
+    <ul class="field-errors">
+      {% for error in data.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% macro field(data) %}
+  <div class="field-wrapper">
+    <label>{{ data.label }}</label>
+    {% if data.type == 'textarea' %}
+      {{ _self.textarea(data) }}
+    {% elseif data.type == 'select' %}
+      {{ _self.select(data) }}
+    {% else %}
+      {{ _self.input(data) }}
+    {% endif %}
+    {{ _self.errors(data) }}
+  </div>
+{% endmacro %}
+```
+
+#### Usage Example (in `views/forms/contact.html`):
+
+```canvas
+{% import 'components/form' as ui %}
+
+{% form 'contact' %}
+  {% for field in form.fields %}
+    {{ ui.field(field) }}
+  {% endfor %}
+
+  <button type="submit" class="">Submit</button>
+{% endform %}
+```
+
+### Form Field Constraints
+
+**Allowed field types:**
+
+| Type | Description |
+| ---- | ----------- |
+| `text` | Single line of text |
+| `textarea` | Multi-line plain text |
+| `email` | Email address with validation |
+| `phone` | Phone number |
+| `url` | Web address or link |
+| `number` | Numeric value |
+| `select` | Dropdown — pick one option |
+| `radio` | Choose one option from a visible list |
+| `checkbox` | Select multiple options from a list |
+| `date` | Calendar date picker |
+| `time` | Time of day picker |
+| `hidden` | Hidden field not visible to the user |
+
+- Do not use custom field types. If a required type is not in this list, default to `text` and notify the user.
+- Always transmit field types to the MCP in lowercase format.
+
+### MCP Workflow
+
+Run `list_forms` first to confirm no form with the same handle exists, then use `create_form` to register the form. Use `list_submissions` or `retrieve_submission` to access submitted data.
+
+Reference: [Link to documentation](https://docs.blutui.com/guides/create-form)
+
+---
+
+
+## Menus
+
+Menus are managed in the Blutui dashboard and accessed in templates via `cms.menu('handle')`. Use them for all site navigation — never hardcode nav links in templates.
+
+### Basic Usage
+
+```canvas
+{% set nav = cms.menu('main') %}
+<ul>
+  {% for item in nav.items %}
+    {% if item.active %}
+      <li>
+        <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+          {{ item.label }}
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+```
+
+Always check `item.active` before rendering a menu item. Items with `active: false` have been hidden by an editor in the dashboard and must not appear on the site.
+
+### Menu and Item Fields
+
+**Menu object:**
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Menu name |
+| `handle` | Menu handle |
+| `items` | Array of top-level menu items |
+
+**Menu item fields:**
+
+| Field | Description |
+| ----- | ----------- |
+| `label` | Display label |
+| `href` | Link URL |
+| `opens_new_tab` | `true` if link should open in a new tab — render `target="_blank"` |
+| `active` | `true` if the item should be visible on the site — skip rendering when `false` |
+| `order` | Manual ordering value |
+| `items` | Nested child items (for dropdowns) |
+
+### Dropdown / Nested Navigation
+
+Menu items can have children for dropdown menus. Check `item.items` before rendering a dropdown:
+
+```canvas
+{% set nav = cms.menu('main') %}
+{% for item in nav.items %}
+  {% if item.active %}
+    {% if item.items %}
+      <div>
+        <button>{{ item.label }}</button>
+        <ul>
+          {% for child in item.items %}
+            {% if child.active %}
+              <li>
+                <a href="{{ child.href }}" {% if child.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                  {{ child.label }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <a href="{{ item.href }}" {% if item.opens_new_tab %}target="_blank" rel="noopener"{% endif %}>
+        {{ item.label }}
+      </a>
+    {% endif %}
+  {% endif %}
+{% endfor %}
+```
+
+### Common Menu Handles
+
+Projects typically have multiple menus for different regions:
+
+```canvas
+{% set nav = cms.menu('main') %}       {# Primary navigation #}
+{% set footer = cms.menu('footer') %}  {# Footer navigation #}
+```
+
+### MCP Workflow
+
+- Run `list_menus` before `create_menu` to avoid duplicates.
+- Use `create_menu` to register a new menu in the dashboard.
+- After creating a menu, add items via the dashboard or the relevant MCP tool.
+
+Reference: [Add a menu to your project](https://docs.blutui.com/guides/add-menu-to-project)
+
+---
+
+
+## Routing Pattern Standard
+
+The agent must pay attention to route patterns when the project would require to build many pages that will include more than one nested page.
+
+- A route pattern could include parameter(s) (e.g., `/team/:name`), which is accessed in code via `route.data.name`.
+- The supported parameter types: string, slug, date, time, number.
+- Each unique route pattern is mapped to a single template file.
+- **Do not create route patterns for blogs.** Blutui blogs auto-route — see `rules/blog.md`. Use route patterns only for collection-driven detail pages (e.g. `/team/:name`, `/products/:slug`).
+
+Route patterns can be utilised to filter collections as shown below:
+
+```canvas
+{% set members = cms.collection('team') %}
+{% set member = members | filter(entry => (entry.name | slug) == route.data.name) | first %}
+<h1>{{ member.name }}</h1>
+<p>{{ member.bio }}</p>
+```
+
+Use Blutui MCP tools to create, retrieve and list route patterns.
+
+Run `list_route_patterns` first and confirm the pattern is unique before calling `create_route_pattern`.
+
+Reference: [Link to documentation - How do I use route patterns in my project?](https://docs.blutui.com/guides/add-route-patterns)
+
+---
+
+
+## Canopy
+
+Canopy is Blutui's in-page editor. Canopy elements define editable regions in a layout so content editors can manage text, images, buttons, and more directly from the dashboard without touching code.
+
+**Important:** Canopy elements are **page-specific** — their content is tied to the page they appear on. For reusable global content (e.g. footer text, announcement banners), use a Collection instead.
+
+Each Canopy element requires a **unique handle** as its first argument. Handles must be unique within each page.
+
+### Available Elements
+
+#### `cms_text(name, options?)`
+
+Editable text content.
+
+| Argument | Required | Description |
+| -------- | -------- | ----------- |
+| `name` | yes | Unique handle |
+| `value` | no | Default text content |
+| `class` | no | CSS classes |
+
+```canvas
+{{ cms_text('text-description', {
+  value: 'Lorem ipsum dolor sit amet.',
+  class: 'text-lg text-slate-600'
+}) }}
+```
+
+---
+
+#### `cms_heading(name, options?)`
+
+Editable heading (h1–h6). The element renders its own HTML tag.
+
+| Argument | Required | Description |
+| -------- | -------- | ----------- |
+| `name` | yes | Unique handle |
+| `element` | no | HTML tag: `h1`, `h2`, `h3`, `h4`, `h5`, `h6` |
+| `value` | no | Default heading text |
+| `class` | no | CSS classes |
+
+```canvas
+{{ cms_heading('heading-hero', {
+  element: 'h1',
+  value: 'Welcome to Our Site',
+  class: 'text-3xl md:text-5xl font-semibold'
+}) }}
+```
+
+---
+
+#### `cms_image(name, options?)`
+
+Editable image. Renders an `<img>` tag.
+
+| Argument | Required | Description |
+| -------- | -------- | ----------- |
+| `name` | yes | Unique handle |
+| `url` | no | Default image URL |
+| `alt_text` | no | Alt text for accessibility and SEO |
+| `class` | no | CSS classes |
+
+```canvas
+{{ cms_image('image-hero', {
+  url: 'https://placehold.co/1200x900',
+  alt_text: 'Hero Image',
+  class: 'w-full h-auto object-cover'
+}) }}
+```
+
+---
+
+#### `cms_button(name, options?)`
+
+Editable link styled as a button.
+
+| Argument | Required | Description |
+| -------- | -------- | ----------- |
+| `name` | yes | Unique handle |
+| `text` | no | Button label |
+| `url` | no | Button href |
+| `opens_new_tab` | no | `true` to open in a new tab |
+| `class` | no | CSS classes |
+
+```canvas
+{{ cms_button('button-cta', {
+  text: 'Get Started',
+  url: '#contact',
+  opens_new_tab: false,
+  class: 'inline-flex items-center bg-slate-900 text-white px-5 py-3'
+}) }}
+```
+
+---
+
+For `cms_list`, `cms_quote`, and `cms_code` — use `search_blutui_documentation` to get their full signatures and options.
+
+### Complete Example
+
+```canvas
+{% block body %}
+<section class="bg-white text-slate-900">
+  <div class="mx-auto max-w-7xl px-6 py-20">
+    {{ cms_heading('heading-hero', {
+      element: 'h1',
+      value: 'Welcome to Our Site',
+      class: 'text-3xl md:text-5xl font-semibold'
+    }) }}
+
+    {{ cms_text('text-description', {
+      value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      class: 'text-lg text-slate-600'
+    }) }}
+
+    {{ cms_button('button-cta', {
+      text: 'Get Started',
+      url: '#contact',
+      opens_new_tab: false,
+      class: 'inline-flex items-center bg-slate-900 text-white px-5 py-3'
+    }) }}
+
+    {{ cms_image('image-hero', {
+      url: 'https://placehold.co/1200x900',
+      alt_text: 'Hero Image',
+      class: 'w-full h-auto object-cover'
+    }) }}
+  </div>
+</section>
+{% endblock %}
+```
+
+### Usage Notes
+
+- Only use Canopy elements for **page-specific** content that editors need to change per page.
+- Static structural elements (nav, footer chrome, layout scaffolding) should not use Canopy elements.
+- For **global** or **shared** content, use a Collection.
+
+Reference: [Link to documentation](https://docs.blutui.com/docs/canopy/getting-started)
+
+</blutui-project-guidelines>

@@ -24,14 +24,39 @@ Ensure your `views` directory is organized as follows:
   <input type="{{ data.type }}" name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %} />
 {% endmacro %}
 
+{% macro textarea(data) %}
+  <textarea name="{{ data.name }}" placeholder="{{ data.placeholder }}" {% if data.required %} required {% endif %}></textarea>
+{% endmacro %}
+
+{% macro select(data) %}
+  <select name="{{ data.name }}" {% if data.required %} required {% endif %}>
+    {% for option in data.options %}
+      <option value="{{ option.value }}">{{ option.label }}</option>
+    {% endfor %}
+  </select>
+{% endmacro %}
+
+{% macro errors(data) %}
+  {% if data.errors %}
+    <ul class="field-errors">
+      {% for error in data.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
 {% macro field(data) %}
   <div class="field-wrapper">
     <label>{{ data.label }}</label>
     {% if data.type == 'textarea' %}
       {{ _self.textarea(data) }}
+    {% elseif data.type == 'select' %}
+      {{ _self.select(data) }}
     {% else %}
       {{ _self.input(data) }}
     {% endif %}
+    {{ _self.errors(data) }}
   </div>
 {% endmacro %}
 ```
@@ -52,8 +77,28 @@ Ensure your `views` directory is organized as follows:
 
 ### Form Field Constraints
 
-- **Allowed Types:** "text", "textarea", "radio", "select", "checkbox", "url", "email", "phone", "hidden", "time", "date", "number"
-- Do not attempt to use custom field types. If a type is not on this list, default to `text` and notify the user.
+**Allowed field types:**
+
+| Type | Description |
+| ---- | ----------- |
+| `text` | Single line of text |
+| `textarea` | Multi-line plain text |
+| `email` | Email address with validation |
+| `phone` | Phone number |
+| `url` | Web address or link |
+| `number` | Numeric value |
+| `select` | Dropdown — pick one option |
+| `radio` | Choose one option from a visible list |
+| `checkbox` | Select multiple options from a list |
+| `date` | Calendar date picker |
+| `time` | Time of day picker |
+| `hidden` | Hidden field not visible to the user |
+
+- Do not use custom field types. If a required type is not in this list, default to `text` and notify the user.
 - Always transmit field types to the MCP in lowercase format.
 
-Reference: [Link to documentation](https://dev.blutui.com/guides/create-form)
+### MCP Workflow
+
+Run `list_forms` first to confirm no form with the same handle exists, then use `create_form` to register the form. Use `list_submissions` or `retrieve_submission` to access submitted data.
+
+Reference: [Link to documentation](https://docs.blutui.com/guides/create-form)
