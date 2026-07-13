@@ -27,7 +27,7 @@ Load the rule files that match your task. Always load ALL that apply — multipl
 | Project file structure / starting a new project           | `rules/foundation-file-structure.md`                            |
 | Version control / switching cassettes                     | `rules/cassettes.md`                                            |
 | Calling the Blutui MCP or writing MCP integrations        | `rules/mcp.md`                                                  |
-| Using Canopy (in-page editor)                             | `rules/canopy.md`                                               |
+| Using Canopy Blocks (in-page editor)                      | `rules/canopy.md` + the `blutui-canopy-blocks` skill            |
 
 Rule files live at: `rules/<rule-name>.md`
 

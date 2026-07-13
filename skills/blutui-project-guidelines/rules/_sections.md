@@ -37,5 +37,5 @@ The section ID (in parentheses) is the filename prefix used to group rules.
 
 ## 7. Canopy
 
-**Impact:** MEDIUM
-**Description:** In-page editor integration for enabling content managers to edit text, images, and other elements directly in the browser.
+**Impact:** HIGH
+**Description:** In-page editor integration. Canopy Blocks let developers define reusable section templates that editors add, fill in, and arrange in the browser. Legacy Canopy elements (cms_*) are deprecated.
