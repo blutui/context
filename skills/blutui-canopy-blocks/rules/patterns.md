@@ -26,6 +26,7 @@ When creating a new block:
 - **Constrain choices with `select`/`radio`** for variants like alignment, background theme, or column count, so editors can only pick valid values. Never ask editors to type CSS classes or hex codes into text fields (use `color` for colors).
 - **Constrain `heading` elements** to what the page structure allows (e.g. `h2`/`h3` for mid-page blocks) so editors can't break the heading hierarchy.
 - **Use `checkbox` toggles for optional parts** of a section (e.g. "show CTA button") and guard the markup with `{% if %}`.
+- **Organize dense settings forms with `tab` and `group`.** A common split is a **Content** tab (text, images, links) and a **Style** tab (colors, alignment, spacing), with related fields under collapsible groups. Settings sharing a `group` must sit consecutively in the `settings` array; settings without a `tab` land under a **General** tab.
 - **Keep block-specific CSS/JS in `head`/`scripts` sections**, not inline in the template — they dedupe once per area and keep the rendered blocks clean.
 - **Content ownership:** page-scoped block areas for per-page content; `{ shared: true }` areas for global sections; Collections for structured, queryable data (blog posts, products, team members) — blocks can render Collection data, but the data itself belongs in the Collection.
 

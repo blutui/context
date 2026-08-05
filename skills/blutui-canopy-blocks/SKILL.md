@@ -53,7 +53,7 @@ Load the rule files that match your task. Load ALL that apply:
 | Task                                                        | Load                        |
 | ----------------------------------------------------------- | ---------------------------- |
 | Creating/editing a block template, config, or sections     | `rules/block-templates.md`  |
-| Defining settings (types, defaults, value shapes)          | `rules/settings.md`         |
+| Defining settings (types, defaults, tabs/groups)           | `rules/settings.md`         |
 | Rendering blocks in layouts (areas, head/scripts, shared)  | `rules/rendering.md`        |
 | Designing blocks, build workflow, common patterns          | `rules/patterns.md`         |
 | Maintaining or migrating deprecated `cms_*` elements       | `rules/legacy-elements.md`  |

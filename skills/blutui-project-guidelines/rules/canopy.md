@@ -14,7 +14,7 @@ Canopy is Blutui's in-page editor. **Canopy Blocks** are the current mechanism: 
 ### Essentials
 
 - Block templates are single `.canvas` files in `views/canopy/`, made of `{% canopy %}` sections: `config` (JSON: `title`, optional `name` and `settings`), `template` (required Canvas code, receives a `settings` variable), and optional `head` / `scripts` for block-specific CSS/JS.
-- The config must be strictly valid JSON (double quotes, no trailing commas); settings with a missing or unknown `name`/`type` are silently ignored.
+- The config must be strictly valid JSON (double quotes, no trailing commas); settings with a missing or unknown `name`/`type` are silently ignored. Settings can declare a `tab` and a `group` to organize the editing form.
 - Layouts render blocks in **block areas** — page-scoped by default, site-wide with `{ shared: true }` (footers, global sections).
 
 ```canvas

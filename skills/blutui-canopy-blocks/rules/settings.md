@@ -19,8 +19,33 @@ All setting types accept:
 | `type`               | **Required.** One of the types below                                            |    String |
 | `label` (optional)   | The field label shown in the Canopy editor. Generated from the name if omitted |    String |
 | `default` (optional) | The value used until an editor provides one                                     |     Mixed |
+| `tab` (optional)     | The editor tab the setting appears under. See [Tabs and groups](#tabs-and-groups) |    String |
+| `group` (optional)   | The collapsible group the setting appears in. See [Tabs and groups](#tabs-and-groups) |    String |
 
 A setting with a missing `name`, missing `type`, or unknown `type` is **silently ignored** — no error, the field just never appears.
+
+### Tabs and groups
+
+Blocks with many settings can organize them so editors are not shown everything at once. Both attributes are optional and **only affect the editing form** — they change nothing about how values are accessed in the template section (`settings.<name>` stays flat).
+
+- **`tab`** splits the form into tabs. Tabs appear in the order they are first used, and any settings without a `tab` are gathered under a **General** tab. The form only shows tabs when at least one setting declares one.
+- **`group`** places **consecutive settings** under a labelled divider. Groups are open by default, and editors can collapse them. Keep grouped settings adjacent in the `settings` array — the grouping is positional.
+
+```json
+{
+    "title": "Hero",
+    "name": "hero",
+    "settings": [
+        { "name": "title", "type": "text", "tab": "Content" },
+        { "name": "description", "type": "textarea", "tab": "Content" },
+        { "name": "background", "type": "color", "tab": "Style", "group": "Colors" },
+        { "name": "text_color", "type": "color", "tab": "Style", "group": "Colors" },
+        { "name": "custom_class", "type": "text", "tab": "Style", "group": "Advanced" }
+    ]
+}
+```
+
+This config gives the block a **Content** tab with two fields, and a **Style** tab where the color settings sit under a **Colors** group and the class setting under an **Advanced** group.
 
 ### Type reference
 
@@ -178,5 +203,6 @@ Value: Array of objects, each with a `url` and a `type` (the MIME type). Extra a
 - Images, PDFs, downloads → `file` with an `accept` filter
 - Short repeatable items (feature bullets, tags) → `list`
 - Anything more structured or shared across pages → a Collection, not block settings
+- More than a handful of settings → organize with `tab` (e.g. **Content** / **Style**) and `group` so editors aren't shown everything at once
 
 Reference: [Canopy Block Settings documentation](https://docs.blutui.com/docs/canopy/canopy-block-settings)
