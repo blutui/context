@@ -21,8 +21,27 @@ All setting types accept:
 | `default` (optional) | The value used until an editor provides one                                     |     Mixed |
 | `tab` (optional)     | The editor tab the setting appears under. See [Tabs and groups](#tabs-and-groups) |    String |
 | `group` (optional)   | The collapsible group the setting appears in. See [Tabs and groups](#tabs-and-groups) |    String |
+| `help` (optional)    | Short hint shown as an info icon (tooltip) next to the field label. See [Help and description](#help-and-description) |    String |
+| `description` (optional) | Muted helper text rendered below the input. See [Help and description](#help-and-description) |    String |
 
 A setting with a missing `name`, missing `type`, or unknown `type` is **silently ignored** — no error, the field just never appears.
+
+### Help and description
+
+Every setting accepts two optional strings that only affect the block edit sheet — neither is available in the template section:
+
+- **`help`** — a short hint shown as an info icon (tooltip) next to the field's label. Use for a one-liner explaining what the field controls.
+- **`description`** — muted helper text rendered below the input. Use for longer guidance.
+
+```json
+{
+    "name": "heading",
+    "type": "text",
+    "label": "Heading",
+    "help": "Shown at the top of the section",
+    "description": "Keep it under 60 characters for best results."
+}
+```
 
 ### Tabs and groups
 
@@ -194,6 +213,96 @@ Value: Array of objects, each with a `url` and a `type` (the MIME type). Extra a
 </video>
 ```
 
+#### `collection` — pick a collection, render all its entries
+
+Lets the editor pick a collection; the template receives the collection **and all of its entries, already hydrated**. Takes only the base attributes (`name`, `type`, `label`, `default`, `help`, `description`, `placeholder`, `tab`, `group`) — `default` may be a collection handle String.
+
+Stored value: the collection handle (String). Resolved value in the template (`settings.<name>`): `null` if nothing is selected or the collection no longer exists, otherwise an object —
+
+| Property  | Description                                  | Data Type |
+| --------- | -------------------------------------------- | --------: |
+| `id`      | The collection id                            |    String |
+| `object`  | Always `"collection"`                        |    String |
+| `name`    | The collection name                          |    String |
+| `handle`  | The collection handle                        |    String |
+| `entries` | All of the collection's entries, presented   |     Array |
+
+Each entry is a presented collection entry — field values accessible by field name (e.g. `entry.title`), plus `id`, `created_at`, `updated_at`.
+
+**Always null-check** — a deleted or unselected collection resolves to `null`:
+
+```canvas
+{% if settings.source %}
+  {% for entry in settings.source.entries %}{{ entry.title }}{% endfor %}
+{% endif %}
+```
+
+#### `entry` — pick one or more entries from a collection
+
+Lets the editor pick one or more entries from a collection. Three collection modes and two cardinalities, all driven by config.
+
+**Collection modes:**
+
+- `"collection": "<handle>"` — **hard-declared.** The picker is locked to this collection (no collection dropdown is shown), and at render time this handle always wins over whatever is stored, so stale data can never resolve entries from another collection.
+- `"default_collection": "<handle>"` — **pre-selected.** The picker starts on this collection but the editor can switch; switching clears the selected entries. Ignored when `collection` is set.
+- Neither — the editor picks the collection first, then the entry.
+
+**Cardinality:**
+
+- `"multiple": false` (default) — single entry select.
+- `"multiple": true` — multi entry select; optional `"min"` and `"max"` (Integers) bound the count (the editor enforces `max`).
+
+**Other attributes:**
+
+- `"display_field": "<field name>"` — optional, **editor-only.** Picker labels normally show the entry's first non-empty text field; this forces a specific field to be shown while selecting (falls back to the default label for entries where that field is empty). It never changes what the template receives.
+- `placeholder` — placeholder text for the entry select.
+
+Stored value shapes (what lives in block data):
+
+```json
+{ "collection": "<handle>", "id": "<entry id>" }
+{ "collection": "<handle>", "ids": ["<entry id>", "..."] }
+```
+
+Resolved value in the template (`settings.<name>`):
+
+- **single**: a presented entry — field values by name, e.g. `settings.featured.title` — or `null` when nothing is selected or the entry/collection was deleted.
+- **multiple**: an Array of presented entries **in the editor's picked order** (templates can rely on it; deleted entries are silently skipped), or `[]` when empty.
+
+**Always null-check / length-check:**
+
+```canvas
+{% if settings.featured %}{{ settings.featured.title }}{% endif %}
+
+{% if settings.related|length > 0 %}
+  {% for item in settings.related %}{{ item.title }}{% endfor %}
+{% endif %}
+```
+
+Full example combining the reference types:
+
+```canvas
+{% canopy config %}
+{
+    "title": "Featured Products",
+    "name": "featured_products",
+    "settings": [
+        { "name": "source", "type": "collection", "label": "Collection",
+          "help": "All entries of the chosen collection are rendered." },
+        { "name": "featured", "type": "entry", "label": "Featured",
+          "collection": "products", "display_field": "sku",
+          "description": "Locked to the products collection." },
+        { "name": "picked", "type": "entry", "label": "Highlight",
+          "default_collection": "products" },
+        { "name": "related", "type": "entry", "label": "Related",
+          "collection": "products", "multiple": true, "max": 4 }
+    ]
+}
+{% endcanopy %}
+```
+
+Prefer hard-declaring `collection` whenever the block is designed for one specific collection (a "Featured Products" block should lock to `products`); only leave it open when the block is genuinely generic.
+
 ### Choosing types
 
 - Single line of copy → `text`; paragraph → `textarea`; formatted body content → `richtext`
@@ -202,7 +311,9 @@ Value: Array of objects, each with a `url` and a `type` (the MIME type). Extra a
 - Optional sections → `checkbox` toggle guarding the markup
 - Images, PDFs, downloads → `file` with an `accept` filter
 - Short repeatable items (feature bullets, tags) → `list`
-- Anything more structured or shared across pages → a Collection, not block settings
+- Anything more structured or shared across pages → a Collection, not block settings; surface it in the block with `collection` (render every entry) or `entry` (editor curates specific entries)
+- Editor-curated content from a collection (featured products, related posts) → `entry`, hard-declaring `collection` when the block targets one specific collection
 - More than a handful of settings → organize with `tab` (e.g. **Content** / **Style**) and `group` so editors aren't shown everything at once
+- Fields that need explanation → a short `help` tooltip on the label, or a longer `description` below the input
 
 Reference: [Canopy Block Settings documentation](https://docs.blutui.com/docs/canopy/canopy-block-settings)

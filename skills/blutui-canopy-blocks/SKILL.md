@@ -64,7 +64,8 @@ Load the rule files that match your task. Load ALL that apply:
 2. **Config must be strictly valid JSON** — double quotes, no trailing commas, no comments. Settings with a missing `name`, missing `type`, or unknown `type` are **silently ignored**, so a typo fails without an error.
 3. **Give every setting a sensible `default`** so blocks look complete the moment an editor adds them.
 4. **Guard object and array setting values** (`url`, `file`, `list`, `media-sources`) with `{% if %}` / `{% for %}` before rendering dependent markup.
-5. **Output `richtext` values with the `raw` filter** — they are stored as HTML.
-6. **Pair every block area with `canopy.head` and `canopy.scripts` using the same handle** — otherwise blocks' CSS and JS never load.
-7. **Choose the right tool:** blocks for editor-composed sections; `{ shared: true }` areas for global sections (footers); Collections for structured, queryable data (blog posts, products).
-8. **Never use deprecated `cms_*` element functions in new work** — build a block template instead.
+5. **Always guard `collection` and `entry` setting values** — deleted content resolves to `null` (single `entry`, `collection`) or `[]` (`multiple` entry select), so unguarded templates break.
+6. **Output `richtext` values with the `raw` filter** — they are stored as HTML.
+7. **Pair every block area with `canopy.head` and `canopy.scripts` using the same handle** — otherwise blocks' CSS and JS never load.
+8. **Choose the right tool:** blocks for editor-composed sections; `{ shared: true }` areas for global sections (footers); Collections for structured, queryable data (blog posts, products) — surfaced in blocks via the `collection` and `entry` setting types.
+9. **Never use deprecated `cms_*` element functions in new work** — build a block template instead.
