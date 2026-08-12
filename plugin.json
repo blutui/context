@@ -1,0 +1,13 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "blutui",
+  "description": "Plugin that includes the Blutui MCP server and Skills for building Blutui projects.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Blutui",
+    "url": "https://blutui.com"
+  },
+  "homepage": "https://github.com/blutui/context",
+  "keywords": ["blutui", "context", "mcp", "skills"],
+  "repository": "https://github.com/blutui/context"
+}
