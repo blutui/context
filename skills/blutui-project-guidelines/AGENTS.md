@@ -974,140 +974,44 @@ Reference: [Link to documentation - How do I use route patterns in my project?](
 
 ## Canopy
 
-Canopy is Blutui's in-page editor. Canopy elements define editable regions in a layout so content editors can manage text, images, buttons, and more directly from the dashboard without touching code.
+Canopy is Blutui's in-page editor. **Canopy Blocks** are the current mechanism: developers define reusable section templates, and content editors add them to pages, fill in their settings, and arrange them in the Canopy editor.
 
-**Important:** Canopy elements are **page-specific** — their content is tied to the page they appear on. For reusable global content (e.g. footer text, announcement banners), use a Collection instead.
+> The older per-field Canopy elements (`cms_text`, `cms_heading`, `cms_image`, `cms_button`, `cms_list`, `cms_quote`, `cms_code`) are **deprecated**. Never use them in new work — build a block template instead.
 
-Each Canopy element requires a **unique handle** as its first argument. Handles must be unique within each page.
+### Essentials
 
-### Available Elements
-
-#### `cms_text(name, options?)`
-
-Editable text content.
-
-| Argument | Required | Description |
-| -------- | -------- | ----------- |
-| `name` | yes | Unique handle |
-| `value` | no | Default text content |
-| `class` | no | CSS classes |
+- Block templates are single `.canvas` files in `views/canopy/`, made of `{% canopy %}` sections: `config` (JSON: `title`, optional `name` and `settings`), `template` (required Canvas code, receives a `settings` variable), and optional `head` / `scripts` for block-specific CSS/JS.
+- The config must be strictly valid JSON (double quotes, no trailing commas); settings with a missing or unknown `name`/`type` are silently ignored. Settings can declare a `tab` and a `group` to organize the editing form.
+- Layouts render blocks in **block areas** — page-scoped by default, site-wide with `{ shared: true }` (footers, global sections).
+- Blocks can nest **one level**: a folder named after a block file (`gallery.canvas` → `gallery/`) makes it a parent whose child blocks editors manage inside it. The parent template must render exactly one plain `{{ canopy.children() }}`, and every child config needs an explicit `name`.
 
 ```canvas
-{{ cms_text('text-description', {
-  value: 'Lorem ipsum dolor sit amet.',
-  class: 'text-lg text-slate-600'
-}) }}
+<head>{{ canopy.head('main') }}</head>
+<body>
+  {{ canopy.blocks('main') }}
+  {{ canopy.blocks('footer', { shared: true }) }}
+  {{ canopy.scripts('main') }}
+</body>
 ```
 
----
+| Function                             | Purpose                                          |
+| ------------------------------------ | ------------------------------------------------- |
+| `canopy.blocks(handle, options?)`    | Render a block area                              |
+| `canopy.render(template, settings?)` | Render a block template directly, without editor content |
+| `canopy.head(handle)`                | Output head sections for the blocks in an area   |
+| `canopy.scripts(handle)`             | Output scripts sections for an area              |
 
-#### `cms_heading(name, options?)`
+### Core rules
 
-Editable heading (h1–h6). The element renders its own HTML tag.
+1. Give every setting a sensible `default` so blocks look complete when added.
+2. Output `richtext` settings with the `raw` filter; guard object/array values (`url`, `file`, `list`) with `{% if %}` / `{% for %}`.
+3. Pair every block area with `canopy.head` and `canopy.scripts` using the **same handle**, or block CSS/JS never loads.
+4. Blocks are for editor-composed sections; use `{ shared: true }` areas for global sections and Collections for structured, queryable data.
 
-| Argument | Required | Description |
-| -------- | -------- | ----------- |
-| `name` | yes | Unique handle |
-| `element` | no | HTML tag: `h1`, `h2`, `h3`, `h4`, `h5`, `h6` |
-| `value` | no | Default heading text |
-| `class` | no | CSS classes |
+### Full reference
 
-```canvas
-{{ cms_heading('heading-hero', {
-  element: 'h1',
-  value: 'Welcome to Our Site',
-  class: 'text-3xl md:text-5xl font-semibold'
-}) }}
-```
+For the complete guide — block template anatomy, all setting types and value shapes, rendering options, design patterns, and migrating legacy `cms_*` elements — **load the `blutui-canopy-blocks` skill**.
 
----
-
-#### `cms_image(name, options?)`
-
-Editable image. Renders an `<img>` tag.
-
-| Argument | Required | Description |
-| -------- | -------- | ----------- |
-| `name` | yes | Unique handle |
-| `url` | no | Default image URL |
-| `alt_text` | no | Alt text for accessibility and SEO |
-| `class` | no | CSS classes |
-
-```canvas
-{{ cms_image('image-hero', {
-  url: 'https://placehold.co/1200x900',
-  alt_text: 'Hero Image',
-  class: 'w-full h-auto object-cover'
-}) }}
-```
-
----
-
-#### `cms_button(name, options?)`
-
-Editable link styled as a button.
-
-| Argument | Required | Description |
-| -------- | -------- | ----------- |
-| `name` | yes | Unique handle |
-| `text` | no | Button label |
-| `url` | no | Button href |
-| `opens_new_tab` | no | `true` to open in a new tab |
-| `class` | no | CSS classes |
-
-```canvas
-{{ cms_button('button-cta', {
-  text: 'Get Started',
-  url: '#contact',
-  opens_new_tab: false,
-  class: 'inline-flex items-center bg-slate-900 text-white px-5 py-3'
-}) }}
-```
-
----
-
-For `cms_list`, `cms_quote`, and `cms_code` — use `search_blutui_documentation` to get their full signatures and options.
-
-### Complete Example
-
-```canvas
-{% block body %}
-<section class="bg-white text-slate-900">
-  <div class="mx-auto max-w-7xl px-6 py-20">
-    {{ cms_heading('heading-hero', {
-      element: 'h1',
-      value: 'Welcome to Our Site',
-      class: 'text-3xl md:text-5xl font-semibold'
-    }) }}
-
-    {{ cms_text('text-description', {
-      value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      class: 'text-lg text-slate-600'
-    }) }}
-
-    {{ cms_button('button-cta', {
-      text: 'Get Started',
-      url: '#contact',
-      opens_new_tab: false,
-      class: 'inline-flex items-center bg-slate-900 text-white px-5 py-3'
-    }) }}
-
-    {{ cms_image('image-hero', {
-      url: 'https://placehold.co/1200x900',
-      alt_text: 'Hero Image',
-      class: 'w-full h-auto object-cover'
-    }) }}
-  </div>
-</section>
-{% endblock %}
-```
-
-### Usage Notes
-
-- Only use Canopy elements for **page-specific** content that editors need to change per page.
-- Static structural elements (nav, footer chrome, layout scaffolding) should not use Canopy elements.
-- For **global** or **shared** content, use a Collection.
-
-Reference: [Link to documentation](https://docs.blutui.com/docs/canopy/getting-started)
+Reference: [Link to documentation](https://docs.blutui.com/docs/canopy/canopy-blocks)
 
 </blutui-project-guidelines>
