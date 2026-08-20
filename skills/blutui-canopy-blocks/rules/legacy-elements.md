@@ -54,4 +54,4 @@ Migration steps:
 3. Replace the section in the layout with a block area (`canopy.blocks`) plus `canopy.head`/`canopy.scripts`.
 4. Re-enter existing editor content as block settings in the Canopy editor — element content does not transfer automatically.
 
-Reference: [Canopy input types documentation](https://docs.blutui.com/docs/canopy/canopy-input-types)
+This file is the authoritative reference for legacy elements — only consult the [Canopy input types documentation](https://docs.blutui.com/docs/canopy/canopy-input-types) for something genuinely not covered here.
