@@ -1,7 +1,7 @@
 ---
 title: Nested Blocks
 impact: CRITICAL
-impactDescription: Parent blocks must render exactly one plain canopy.children() call or editors cannot add or manage children at all, and child configs need explicit names or allow lists and filters silently break.
+impactDescription: Parent blocks must render exactly one plain canopy.children() call or editors cannot add or manage children at all, and child configs need explicit names or filters and default lists silently break.
 tags: nested blocks, child blocks, parent blocks, children config, canopy.children, canopy.child, canopy.childList
 ---
 
@@ -35,7 +35,7 @@ parent.
 from the config `name` (falling back to a slug of the title), NOT the
 filename. A child with `"name": "wide"` in the `gallery/` folder registers as
 `gallery/wide`; one with only `"title": "Wide Image"` registers as
-`gallery/wide-image`, which breaks `allow` lists and filters that expect
+`gallery/wide-image`, which breaks filters and `default` lists that expect
 `gallery/wide`.
 
 ```canvas
@@ -94,7 +94,6 @@ key refines the rules — all sub-keys optional:
 {
     "title": "Gallery",
     "children": {
-        "allow": ["gallery/wide", "cta_banner"],
         "max": 8,
         "default": [
             { "block": "gallery/wide", "data": { "caption": "First item" } },
@@ -104,10 +103,10 @@ key refines the rules — all sub-keys optional:
 }
 ```
 
-- `allow` — replaces the folder set entirely, and may include shared top-level
-  templates (letting a site-wide block be used as a child). A parent with no
-  child folder can declare children this way: list existing templates in
-  `allow`. A `children` key with no folder and no `allow` accepts nothing.
+**The child set comes from the folder alone.** There is no `allow` key here —
+`allow` exists only as an option on the `canopy.blocks()` area declaration
+(see `rules/rendering.md`), never in a block template's config.
+
 - `max` — maximum child count, enforced in the editor and on save.
 - `min` — accepted but not yet enforced; don't rely on it.
 - `default` — children a freshly added parent starts with, ready to edit.
@@ -137,6 +136,6 @@ inline in the child template.
 1. Folder named exactly after the parent file (`gallery.canvas` → `gallery/`).
 2. Every child config has an explicit `"name"`.
 3. Exactly one plain `{{ canopy.children() }}` in the parent template.
-4. `allow`/`max`/`default` set if the design needs constraints or seed content.
-5. Names in `allow` and `default` use the full namespaced key
+4. `max`/`default` set if the design needs constraints or seed content.
+5. Names in `default` use the full namespaced key
    (`gallery/wide`), matching the children's declared names.

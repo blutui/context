@@ -254,7 +254,7 @@ Lets the editor pick one or more entries from a collection. Three collection mod
 
 **Other attributes:**
 
-- `"display_field": "<field name>"` — optional, **editor-only.** Picker labels normally show the entry's first non-empty text field; this forces a specific field to be shown while selecting (falls back to the default label for entries where that field is empty). It never changes what the template receives.
+- `"display_field": "<field name>"` or `["<field>", "<field>"]` — optional, **editor-only.** Picker labels normally show the entry's first non-empty text field; this forces a specific field to be shown while selecting, or — as an array — several fields combined into one label (e.g. `["sku", "title"]` shows both values per entry). Falls back to the default label for entries where the field(s) are empty. It never changes what the template receives.
 - `placeholder` — placeholder text for the entry select.
 
 Stored value shapes (what lives in block data):
@@ -295,13 +295,46 @@ Full example combining the reference types:
         { "name": "picked", "type": "entry", "label": "Highlight",
           "default_collection": "products" },
         { "name": "related", "type": "entry", "label": "Related",
-          "collection": "products", "multiple": true, "max": 4 }
+          "collection": "products", "multiple": true, "max": 4,
+          "display_field": ["sku", "title"] }
     ]
 }
 {% endcanopy %}
 ```
 
 Prefer hard-declaring `collection` whenever the block is designed for one specific collection (a "Featured Products" block should lock to `products`); only leave it open when the block is genuinely generic.
+
+#### `form` — pick a form built in the dashboard
+
+Lets the editor pick one of the site's forms, the same way the `collection` type picks a collection. Pair it with the `{% form %}` Canvas tag to render the picked form — together they give editors fully swappable forms inside a block (a "Contact" block whose form the editor can change without touching code).
+
+**Always null-check** — like `collection`, a deleted or unselected form resolves to `null`:
+
+```canvas
+{% canopy config %}
+{
+    "title": "Contact",
+    "settings": [
+        { "name": "heading", "type": "heading", "default": { "value": "Get in touch", "element": "h2" } },
+        { "name": "enquiry", "type": "form", "label": "Form" }
+    ]
+}
+{% endcanopy %}
+
+{% canopy template %}
+<section>
+  <{{ settings.heading.element }}>{{ settings.heading.value }}</{{ settings.heading.element }}>
+  {% if settings.enquiry %}
+    {% form settings.enquiry.handle %}
+      {# render form.fields — see the form-building skill for the full pattern #}
+      <button type="submit">Send</button>
+    {% endform %}
+  {% endif %}
+</section>
+{% endcanopy %}
+```
+
+When the project has the form-building skill available, use it for the markup inside `{% form %}` — the `form.fields` variable exposes each field's `type`, `name`, `label`, `value`, `errors`, `required`, `placeholder`, and `options`.
 
 ### Choosing types
 
@@ -313,7 +346,8 @@ Prefer hard-declaring `collection` whenever the block is designed for one specif
 - Short repeatable items (feature bullets, tags) → `list`
 - Anything more structured or shared across pages → a Collection, not block settings; surface it in the block with `collection` (render every entry) or `entry` (editor curates specific entries)
 - Editor-curated content from a collection (featured products, related posts) → `entry`, hard-declaring `collection` when the block targets one specific collection
+- An editor-swappable form (contact, enquiry, signup) → `form`, rendered with the `{% form %}` tag
 - More than a handful of settings → organize with `tab` (e.g. **Content** / **Style**) and `group` so editors aren't shown everything at once
 - Fields that need explanation → a short `help` tooltip on the label, or a longer `description` below the input
 
-Reference: [Canopy Block Settings documentation](https://docs.blutui.com/docs/canopy/canopy-block-settings)
+This file is the authoritative reference for setting types — only consult the [Canopy Block Settings documentation](https://docs.blutui.com/docs/canopy/canopy-block-settings) for something genuinely not covered here.

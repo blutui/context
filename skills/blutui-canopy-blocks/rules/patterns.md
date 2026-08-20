@@ -52,3 +52,5 @@ When creating a new block:
 - Richtext output without `|raw` → escaped HTML shown as literal text.
 - Object values (`settings.cta.url`, `settings.image.path`) rendered without an `{% if %}` guard → broken links/attributes when the editor hasn't filled the field and there's no default.
 - Using `canopy.render` for content editors are expected to manage → editors can't edit it; use a block area.
+- `allow`, `limit`, or `locked` written in a block template's config → silently ignored; they only work as options on the `canopy.blocks()` area declaration. The only picker control in block config is `hidden`.
+- A `"hidden": true` block that no area's `allow` list names → editors can never add it anywhere.

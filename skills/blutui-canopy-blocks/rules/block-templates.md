@@ -19,7 +19,7 @@ views/
     └── cta.canvas
 ```
 
-Every template in `views/canopy/` automatically appears in the Canopy editor for editors to add — don't put work-in-progress or internal-only templates there unless they're ready for editors.
+Every template in `views/canopy/` automatically appears in the Canopy editor for editors to add — don't put work-in-progress or internal-only templates there unless they're ready for editors, or set `"hidden": true` in their config to keep them out of the Add Block picker.
 
 ### Sections
 
@@ -41,6 +41,9 @@ A JSON object with these properties:
 | `title`               | The name of the block shown to editors in the Canopy editor                    |    String |
 | `name` (optional)     | Unique identifier for the block template. Generated from the title if omitted  |    String |
 | `settings` (optional) | An array of settings editors can change for each block                         |     Array |
+| `hidden` (optional)   | Set to true to keep the template out of the Add Block picker                   |   Boolean |
+
+**`hidden` blocks and `allow`:** a template with `"hidden": true` never appears in the Add Block picker — **unless** an area's `allow` list names it, in which case it is addable in that area only (`{{ canopy.blocks('footer', { allow: ['cta_banner'] }) }}`). Use this for special-purpose blocks that only make sense in specific areas. `hidden` is the whole story in the block config — the area-side constraints (`allow`, `limit`, `locked`) are **never** written in block config; they belong exclusively on the `canopy.blocks()` area call (see `rules/rendering.md`).
 
 **The config section must be valid JSON:**
 
@@ -111,4 +114,4 @@ These are output wherever the layout calls `canopy.head(handle)` and `canopy.scr
 {% endcanopy %}
 ```
 
-Reference: [Canopy Blocks documentation](https://docs.blutui.com/docs/canopy/canopy-blocks)
+This file is the authoritative reference for block templates — only consult the [Canopy Blocks documentation](https://docs.blutui.com/docs/canopy/canopy-blocks) for something genuinely not covered here.
