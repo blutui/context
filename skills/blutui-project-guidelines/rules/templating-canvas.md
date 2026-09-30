@@ -47,7 +47,7 @@ Canvas allows to add the name of the block after the end tag for better readabil
 **Example:** Incorrect way to use blocks
 
 ```canvas
-{# base.html #}
+{# base.canvas #}
 
 {% for post in posts %}
   {% block post %}
@@ -62,9 +62,9 @@ Canvas allows to add the name of the block after the end tag for better readabil
 A child template looks like this
 
 ```canvas
-{# child.html #}
+{# child.canvas #}
 
-{% extends 'base.html' %}
+{% extends 'base.canvas' %}
 
 {% block post %}
   <article>
@@ -100,9 +100,9 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.canvas`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
-**Example**: Define a base.html template for a two-column page.
+**Example**: Define a base.canvas template for a two-column page.
 
 ```canvas
 <!DOCTYPE html>
@@ -130,7 +130,7 @@ In this example, the block tags define four blocks that child templates can fill
 A child template might look like this:
 
 ```canvas
-{% extends 'base.html' %}
+{% extends 'base.canvas' %}
 
 {% block title %}Index{% endblock %}
 
@@ -157,13 +157,13 @@ The `extends` tag can be used to extend a template from another one. Canvas does
 
 Always follow the 3-tier pattern when building pages:
 
-1. **Template** (`templates/default.html`) — Defines the overall HTML structure with `block` placeholders.
-2. **Layout** (`layouts/about.html`) — Extends the template using `{% extends %}`, fills `block` content, and includes components.
-3. **Component** (`components/hero.html`) — A reusable UI fragment included via `{{ include() }}`.
+1. **Template** (`templates/default.canvas`) — Defines the overall HTML structure with `block` placeholders.
+2. **Layout** (`layouts/about.canvas`) — Extends the template using `{% extends %}`, fills `block` content, and includes components.
+3. **Component** (`components/hero.canvas`) — A reusable UI fragment included via `{{ include() }}`.
 
 **Example:** Complete 3-tier composition
 
-Template (`views/templates/default.html`):
+Template (`views/templates/default.canvas`):
 
 ```canvas
 <!DOCTYPE html>
@@ -174,14 +174,14 @@ Template (`views/templates/default.html`):
     {% endblock %}
   </head>
   <body>
-    {{ include('components/header.html') }}
+    {{ include('components/header.canvas') }}
     {% block content %}{% endblock %}
-    {{ include('components/footer.html') }}
+    {{ include('components/footer.canvas') }}
   </body>
 </html>
 ```
 
-Component (`views/components/hero.html`):
+Component (`views/components/hero.canvas`):
 
 ```canvas
 <section>
@@ -190,15 +190,15 @@ Component (`views/components/hero.html`):
 </section>
 ```
 
-Layout (`views/layouts/about.html`):
+Layout (`views/layouts/about.canvas`):
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-  {{ include('components/hero.html') }}
+  {{ include('components/hero.canvas') }}
   <article>
     <p>Page content goes here.</p>
   </article>

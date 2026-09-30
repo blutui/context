@@ -12,10 +12,10 @@ Store assets including compiled JS/CSS, images and static PDFs.
 This folder is the primary environment for UI development. Follow these sub-directory conventions:
 
 - "templates/": Has files with reusable design bases and system views.
-  - "default.html": The foundational template for a Blutui project. This file forms the outermost structure of a Blutui project. It features essential sections like the head, where style definitions reside, and the body, where content gets placed. The most efficient way to build upon this file is by using inheritance, capitalising on the block tag.
-  - "404.html": A template for handling "Page Not Found" errors.
+  - "default.canvas": The foundational template for a Blutui project. This file forms the outermost structure of a Blutui project. It features essential sections like the head, where style definitions reside, and the body, where content gets placed. The most efficient way to build upon this file is by using inheritance, capitalising on the block tag.
+  - "404.canvas": A template for handling "Page Not Found" errors.
 - "layouts/": The layouts folder is the **only** way to create pages in a project. Each layout file maps to a page registered via the Blutui dashboard or MCP tools. **Do not create a `pages/` directory.** All page content belongs in layout files.
-- "components/": Contains atomic, reusable UI fragments. Always create components for repeated UI elements (headers, footers, hero sections, CTAs, cards, etc.) and include them in layouts using `{{ include('components/filename.html') }}`.
+- "components/": Contains atomic, reusable UI fragments. Always create components for repeated UI elements (headers, footers, hero sections, CTAs, cards, etc.) and include them in layouts using `{{ include('components/filename.canvas') }}`.
 
 Develop the project using a **component-first approach**. Always break the UI into reusable components in `views/components/`. Include components in layouts using `{{ include() }}` and use `{% block %}` tags for template inheritance. This minimizes duplicate work and ensures design updates stay consistent across all project views.
 
@@ -23,17 +23,17 @@ Develop the project using a **component-first approach**. Always break the UI in
 
 Hierarchy:
 
-- Parent: templates/default.html (Defines the overall structure).
-- Child: layouts/index.html (Extends the template and provides specific page content).
+- Parent: templates/default.canvas (Defines the overall structure).
+- Child: layouts/index.canvas (Extends the template and provides specific page content).
 
-To implement this, ensure the child layout file begins with the `{% extends 'templates/default.html' %}` declaration. Map your content to the parent's placeholders by wrapping your HTML in matching `block` names. Include reusable components within those blocks.
+To implement this, ensure the child layout file begins with the `{% extends 'templates/default.canvas' %}` declaration. Map your content to the parent's placeholders by wrapping your HTML in matching `block` names. Include reusable components within those blocks.
 
 #### Style System Detection
 
 Before generating any HTML or component code, the agent must detect the project's existing style system:
 
 1. Check for `tailwind.config.*` or `postcss.config.*` files in the project root.
-2. Check for CSS framework CDN links (e.g., Bootstrap, Bulma) in `views/templates/default.html`.
+2. Check for CSS framework CDN links (e.g., Bootstrap, Bulma) in `views/templates/default.canvas`.
 3. Check for CSS files in the `/public` directory.
 
 - If a style system is found (e.g., TailwindCSS), **always use its utility classes and conventions** in all generated HTML and components.
@@ -50,18 +50,18 @@ The filename in `pages/` determines the route it serves. Use this mapping to der
 
 | `pages/` file | Layout file path | Registered URL |
 | ------------- | ---------------- | -------------- |
-| `index.html` | `views/layouts/home.html` | `/` |
-| `about.html` | `views/layouts/about.html` | `/about` |
-| `contact.html` | `views/layouts/contact.html` | `/contact` |
+| `index.html` | `views/layouts/home.canvas` | `/` |
+| `about.html` | `views/layouts/about.canvas` | `/about` |
+| `contact.html` | `views/layouts/contact.canvas` | `/contact` |
 
-**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.html` (or another descriptive name) to avoid confusion.
+**`index.html` is the homepage** — it must be registered at `/`, not `/index`. Name the layout file `home.canvas` (or another descriptive name) to avoid confusion.
 
 #### Migration Steps (repeat for each file)
 
 1. **Create the layout file** — Copy the page content into the correct path from the table above. Wrap it in the template inheritance structure:
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
   {# content from the original page file goes here #}
@@ -69,7 +69,7 @@ The filename in `pages/` determines the route it serves. Use this mapping to der
 ```
 
 2. **Register via MCP** — Run `list_pages` to confirm no conflict, then call `create_page` with:
-   - `layout` path relative to `views/` (e.g. `layouts/home.html`)
+   - `layout` path relative to `views/` (e.g. `layouts/home.canvas`)
    - `url` set to the correct registered URL (e.g. `/` for the homepage)
 
 3. **Delete the original file immediately** — Do not proceed to the next file until the current file has been deleted from `pages/`. This step is mandatory, not optional.
@@ -102,32 +102,32 @@ A layout extends a template and fills in its `{% block %}` regions with page-spe
 - **Layouts are the only way to create pages in Blutui.** Every page a content editor creates in the dashboard must be backed by a layout file.
 - When an editor creates a page, they pick a layout from a list. Every layout file a developer adds becomes a new option in that list.
 - **Never create a `pages/` directory.** All page content belongs in `views/layouts/`.
-- When referencing a layout in any Blutui MCP tool (`layout`, `post_layout`, `blog_layout`), the path must be relative to `views/` — e.g. `layouts/about.html`, not `views/layouts/about.html`.
+- When referencing a layout in any Blutui MCP tool (`layout`, `post_layout`, `blog_layout`), the path must be relative to `views/` — e.g. `layouts/about.canvas`, not `views/layouts/about.canvas`.
 
 ### Page Creation Workflow
 
 Follow these steps every time a new page is needed:
 
 1. **Check for the layouts folder:** If `views/layouts/` does not exist, create it. If it already exists, proceed.
-2. **Create the layout file:** Create a new `.html` file inside `views/layouts/` (e.g., `views/layouts/about.html`).
-3. **Extend a template:** The layout must extend a template using `{% extends 'templates/default.html' %}`.
-4. **Build with components:** Create reusable UI fragments in `views/components/` and include them in the layout using `{{ include('components/hero.html') }}`.
-5. **Register the page via MCP:** Use the Blutui MCP `create_page` tool to create the page in the dashboard, setting the layout path relative to `views/` (e.g., `layouts/about.html`).
+2. **Create the layout file:** Create a new `.canvas` file inside `views/layouts/` (e.g., `views/layouts/about.canvas`).
+3. **Extend a template:** The layout must extend a template using `{% extends 'templates/default.canvas' %}`.
+4. **Build with components:** Create reusable UI fragments in `views/components/` and include them in the layout using `{{ include('components/hero.canvas') }}`.
+5. **Register the page via MCP:** Use the Blutui MCP `create_page` tool to create the page in the dashboard, setting the layout path relative to `views/` (e.g., `layouts/about.canvas`).
 
-**Example:** A layout file at `views/layouts/about.html`
+**Example:** A layout file at `views/layouts/about.canvas`
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
-  {{ include('components/hero.html') }}
+  {{ include('components/hero.canvas') }}
 
   <section>
     <h1>About Us</h1>
     <p>Welcome to our about page.</p>
   </section>
 
-  {{ include('components/cta.html') }}
+  {{ include('components/cta.canvas') }}
 {% endblock %}
 ```
 
@@ -198,7 +198,7 @@ Canvas allows to add the name of the block after the end tag for better readabil
 **Example:** Incorrect way to use blocks
 
 ```canvas
-{# base.html #}
+{# base.canvas #}
 
 {% for post in posts %}
   {% block post %}
@@ -213,9 +213,9 @@ Canvas allows to add the name of the block after the end tag for better readabil
 A child template looks like this
 
 ```canvas
-{# child.html #}
+{# child.canvas #}
 
-{% extends 'base.html' %}
+{% extends 'base.canvas' %}
 
 {% block post %}
   <article>
@@ -251,9 +251,9 @@ A parent template looks like this
 
 ### Template Inheritence
 
-Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.html`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
+Maximize your workflow with template inheritance. Instead of duplicating code, build a single base template for common site features in `views/templates/default.canvas`. Use `blocks` to define areas where child templates can inject specific content, ensuring a consistent structure across every page.
 
-**Example**: Define a base.html template for a two-column page.
+**Example**: Define a base.canvas template for a two-column page.
 
 ```canvas
 <!DOCTYPE html>
@@ -281,7 +281,7 @@ In this example, the block tags define four blocks that child templates can fill
 A child template might look like this:
 
 ```canvas
-{% extends 'base.html' %}
+{% extends 'base.canvas' %}
 
 {% block title %}Index{% endblock %}
 
@@ -308,13 +308,13 @@ The `extends` tag can be used to extend a template from another one. Canvas does
 
 Always follow the 3-tier pattern when building pages:
 
-1. **Template** (`templates/default.html`) — Defines the overall HTML structure with `block` placeholders.
-2. **Layout** (`layouts/about.html`) — Extends the template using `{% extends %}`, fills `block` content, and includes components.
-3. **Component** (`components/hero.html`) — A reusable UI fragment included via `{{ include() }}`.
+1. **Template** (`templates/default.canvas`) — Defines the overall HTML structure with `block` placeholders.
+2. **Layout** (`layouts/about.canvas`) — Extends the template using `{% extends %}`, fills `block` content, and includes components.
+3. **Component** (`components/hero.canvas`) — A reusable UI fragment included via `{{ include() }}`.
 
 **Example:** Complete 3-tier composition
 
-Template (`views/templates/default.html`):
+Template (`views/templates/default.canvas`):
 
 ```canvas
 <!DOCTYPE html>
@@ -325,14 +325,14 @@ Template (`views/templates/default.html`):
     {% endblock %}
   </head>
   <body>
-    {{ include('components/header.html') }}
+    {{ include('components/header.canvas') }}
     {% block content %}{% endblock %}
-    {{ include('components/footer.html') }}
+    {{ include('components/footer.canvas') }}
   </body>
 </html>
 ```
 
-Component (`views/components/hero.html`):
+Component (`views/components/hero.canvas`):
 
 ```canvas
 <section>
@@ -341,15 +341,15 @@ Component (`views/components/hero.html`):
 </section>
 ```
 
-Layout (`views/layouts/about.html`):
+Layout (`views/layouts/about.canvas`):
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-  {{ include('components/hero.html') }}
+  {{ include('components/hero.canvas') }}
   <article>
     <p>Page content goes here.</p>
   </article>
@@ -653,8 +653,8 @@ Blutui blogs use automatic routing — **no route patterns or page registrations
 views/
   layouts/
     blogs/
-      index.html   # Blog listing page
-      post.html    # Individual post page
+      index.canvas   # Blog listing page
+      post.canvas    # Individual post page
 ```
 
 If you have multiple blogs with different designs, use separate folders:
@@ -664,14 +664,14 @@ views/layouts/news/
 views/layouts/events/
 ```
 
-Each blog can have its own `index.html` and `post.html` layouts.
+Each blog can have its own `index.canvas` and `post.canvas` layouts.
 
-### Blog Index Layout (`index.html`)
+### Blog Index Layout (`index.canvas`)
 
 On the index page the `blog` object is automatically available. Use `blog.posts` to loop through posts.
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
 <div>
@@ -702,12 +702,12 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 | `blog.description` | Blog description   |
 | `blog.posts`       | Array of all posts |
 
-### Post Layout (`post.html`)
+### Post Layout (`post.canvas`)
 
 On the post page the `post` object is automatically available.
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
 <div>
@@ -736,9 +736,9 @@ On the post page the `post` object is automatically available.
 
 ### MCP Workflow
 
-1. Create `views/layouts/blogs/index.html` and `views/layouts/blogs/post.html`.
+1. Create `views/layouts/blogs/index.canvas` and `views/layouts/blogs/post.canvas`.
 2. Run `list_blogs` to check for an existing blog with the same handle.
-3. Use `create_blog` — set the **index layout** to `layouts/blogs/index.html` and **post layout** to `layouts/blogs/post.html`.
+3. Use `create_blog` — set the **index layout** to `layouts/blogs/index.canvas` and **post layout** to `layouts/blogs/post.canvas`.
 4. Run `list_posts` → use `create_post` to add posts to the blog.
 
 Do **not** call `create_page` or `create_route_pattern` — routing is handled automatically by Blutui.
@@ -756,11 +756,11 @@ Ensure your `views` directory is organized as follows:
 
 - `views/`
   - `components/`
-    - `form.html` (Macro definitions)
+    - `form.canvas` (Macro definitions)
   - `forms/`
-    - `contact.html` (Form implementation)
+    - `contact.canvas` (Form implementation)
 
-#### Usage Example (in `views/components/form.html`):
+#### Usage Example (in `views/components/form.canvas`):
 
 ```canvas
 {% macro input(data) %}
@@ -804,7 +804,7 @@ Ensure your `views` directory is organized as follows:
 {% endmacro %}
 ```
 
-#### Usage Example (in `views/forms/contact.html`):
+#### Usage Example (in `views/forms/contact.canvas`):
 
 ```canvas
 {% import 'components/form' as ui %}

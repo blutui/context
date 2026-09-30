@@ -15,8 +15,8 @@ Blutui blogs use automatic routing — **no route patterns or page registrations
 views/
   layouts/
     blogs/
-      index.html   # Blog listing page
-      post.html    # Individual post page
+      index.canvas   # Blog listing page
+      post.canvas    # Individual post page
 ```
 
 If you have multiple blogs with different designs, use separate folders:
@@ -26,14 +26,14 @@ views/layouts/news/
 views/layouts/events/
 ```
 
-Each blog can have its own `index.html` and `post.html` layouts.
+Each blog can have its own `index.canvas` and `post.canvas` layouts.
 
-### Blog Index Layout (`index.html`)
+### Blog Index Layout (`index.canvas`)
 
 On the index page the `blog` object is automatically available. Use `blog.posts` to loop through posts.
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
 <div>
@@ -64,12 +64,12 @@ On the index page the `blog` object is automatically available. Use `blog.posts`
 | `blog.description` | Blog description   |
 | `blog.posts`       | Array of all posts |
 
-### Post Layout (`post.html`)
+### Post Layout (`post.canvas`)
 
 On the post page the `post` object is automatically available.
 
 ```canvas
-{% extends 'templates/default.html' %}
+{% extends 'templates/default.canvas' %}
 
 {% block body %}
 <div>
@@ -98,9 +98,9 @@ On the post page the `post` object is automatically available.
 
 ### MCP Workflow
 
-1. Create `views/layouts/blogs/index.html` and `views/layouts/blogs/post.html`.
+1. Create `views/layouts/blogs/index.canvas` and `views/layouts/blogs/post.canvas`.
 2. Run `list_blogs` to check for an existing blog with the same handle.
-3. Use `create_blog` — set the **index layout** to `layouts/blogs/index.html` and **post layout** to `layouts/blogs/post.html`.
+3. Use `create_blog` — set the **index layout** to `layouts/blogs/index.canvas` and **post layout** to `layouts/blogs/post.canvas`.
 4. Run `list_posts` → use `create_post` to add posts to the blog.
 
 Do **not** call `create_page` or `create_route_pattern` — routing is handled automatically by Blutui.
