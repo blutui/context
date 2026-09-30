@@ -13,11 +13,11 @@ Ensure your `views` directory is organized as follows:
 
 - `views/`
   - `components/`
-    - `form.html` (Macro definitions)
+    - `form.canvas` (Macro definitions)
   - `forms/`
-    - `contact.html` (Form implementation)
+    - `contact.canvas` (Form implementation)
 
-#### Usage Example (in `views/components/form.html`):
+#### Usage Example (in `views/components/form.canvas`):
 
 ```canvas
 {% macro input(data) %}
@@ -61,7 +61,7 @@ Ensure your `views` directory is organized as follows:
 {% endmacro %}
 ```
 
-#### Usage Example (in `views/forms/contact.html`):
+#### Usage Example (in `views/forms/contact.canvas`):
 
 ```canvas
 {% import 'components/form' as ui %}

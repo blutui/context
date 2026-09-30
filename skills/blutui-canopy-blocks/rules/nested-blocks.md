@@ -67,7 +67,7 @@ filename. A child with `"name": "wide"` in the `gallery/` folder registers as
 {{ canopy.child(0) }}                      {# single child by position (0-based) #}
 
 {% for child in canopy.childList() %}      {# custom loop; child has id, template, settings, html #}
-    <div class="slide">{{ child.html }}</div>
+    <div class="slide">{{ child.canvas }}</div>
 {% endfor %}
 ```
 
@@ -92,14 +92,14 @@ key refines the rules — all sub-keys optional:
 
 ```json
 {
-    "title": "Gallery",
-    "children": {
-        "max": 8,
-        "default": [
-            { "block": "gallery/wide", "data": { "caption": "First item" } },
-            { "block": "gallery/tall" }
-        ]
-    }
+  "title": "Gallery",
+  "children": {
+    "max": 8,
+    "default": [
+      { "block": "gallery/wide", "data": { "caption": "First item" } },
+      { "block": "gallery/tall" }
+    ]
+  }
 }
 ```
 
