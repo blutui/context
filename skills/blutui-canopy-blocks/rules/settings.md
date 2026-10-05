@@ -306,7 +306,7 @@ Prefer hard-declaring `collection` whenever the block is designed for one specif
 
 #### `form` — pick a form built in the dashboard
 
-Lets the editor pick one of the site's forms, the same way the `collection` type picks a collection. Pair it with the `{% form %}` Canvas tag to render the picked form — together they give editors fully swappable forms inside a block (a "Contact" block whose form the editor can change without touching code).
+Lets the editor pick one of the site's forms, the same way the `collection` type picks a collection. Like `collection`, `default` may be a form handle String (e.g. `"default": "contact-form"`) so the block renders a form as soon as it's added. Pair it with the `{% form %}` Canvas tag to render the picked form — together they give editors fully swappable forms inside a block (a "Contact" block whose form the editor can change without touching code).
 
 **Always null-check** — like `collection`, a deleted or unselected form resolves to `null`:
 

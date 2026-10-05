@@ -58,6 +58,7 @@ Load the rule files that match your task. Load ALL that apply:
 | Parent blocks with child blocks (galleries, sliders, accordions) | `rules/nested-blocks.md` |
 | Designing blocks, build workflow, common patterns          | `rules/patterns.md`         |
 | Maintaining or migrating deprecated `cms_*` elements       | `rules/legacy-elements.md`  |
+| Page/route/request data in blocks, JS that touches block markup, seeding page content, debugging silent failures | `rules/edge-cases.md` |
 
 **This skill is authoritative for Canopy Blocks.** Do NOT call the Blutui docs MCP or fetch docs.blutui.com for anything the Rule Index covers — load the matching rule file instead; the rule files are complete and current, including features the public docs may lag behind on. Reach for the docs only for topics genuinely outside this skill (Collections and their field definitions, general Canvas language syntax, dashboard form building) or when a rule file explicitly points there.
 
@@ -74,3 +75,4 @@ Load the rule files that match your task. Load ALL that apply:
 9. **Nested blocks: every parent template needs exactly one plain `{{ canopy.children() }}` call** (filtered/indexed/childList renders are display-only — without the plain call editors cannot add or manage children), and every child template's config needs an explicit `"name"` so it registers under the key filters and `default` lists expect.
 10. **Choose the right tool:** blocks for editor-composed sections; `{ shared: true }` areas for global sections (footers); Collections for structured, queryable data (blog posts, products) — surfaced in blocks via the `collection` and `entry` setting types; forms via the `form` setting type plus the `{% form %}` tag.
 11. **Never use deprecated `cms_*` element functions in new work** — build a block template instead.
+12. **Block templates only see `settings`, `canopy`, and `cms`** — `page`, `route`, `request`, and layout variables are undefined inside a block and fail silently (fallbacks render). Site JavaScript must also handle block markup the Canopy editor re-renders. See `rules/edge-cases.md` for both.

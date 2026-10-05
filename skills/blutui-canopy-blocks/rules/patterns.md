@@ -54,3 +54,6 @@ When creating a new block:
 - Using `canopy.render` for content editors are expected to manage → editors can't edit it; use a block area.
 - `allow`, `limit`, or `locked` written in a block template's config → silently ignored; they only work as options on the `canopy.blocks()` area declaration. The only picker control in block config is `hidden`.
 - A `"hidden": true` block that no area's `allow` list names → editors can never add it anywhere.
+- Reading `page`, `route`, `request`, or layout variables inside a block template → always undefined (blocks only receive `settings`, `canopy`, `cms`); `??` fallbacks hide the bug. See `rules/edge-cases.md`.
+- Wrapping block output in `{% apply %}` without `|raw` → the whole area renders as escaped HTML text.
+- JavaScript that only initialises on page load (scroll reveals, carousels, tabs) → content re-rendered by the Canopy editor stays hidden or inert. Pick up added nodes or use event delegation; see `rules/edge-cases.md`.

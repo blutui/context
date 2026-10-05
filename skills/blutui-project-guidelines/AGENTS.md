@@ -984,6 +984,7 @@ Canopy is Blutui's in-page editor. **Canopy Blocks** are the current mechanism: 
 - The config must be strictly valid JSON (double quotes, no trailing commas); settings with a missing or unknown `name`/`type` are silently ignored. Settings can declare a `tab` and a `group` to organize the editing form.
 - Layouts render blocks in **block areas** — page-scoped by default, site-wide with `{ shared: true }` (footers, global sections).
 - Blocks can nest **one level**: a folder named after a block file (`gallery.canvas` → `gallery/`) makes it a parent whose child blocks editors manage inside it. The parent template must render exactly one plain `{{ canopy.children() }}`, and every child config needs an explicit `name`.
+- A block template's scope holds only `settings`, `canopy`, and `cms` — `page`, `route`, `request`, and layout variables are undefined there (silently), and the Canopy editor re-renders block DOM, so site JavaScript must handle newly added nodes. See the `blutui-canopy-blocks` skill's `rules/edge-cases.md`.
 
 ```canvas
 <head>{{ canopy.head('main') }}</head>
