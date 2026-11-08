@@ -1,6 +1,6 @@
 ---
 name: blutui-project-guidelines
-description: Blutui project guidelines from the Blutui Engineering team. Use this skill whenever working on ANY Blutui project — writing or editing templates, layouts, components, or partials; creating or querying Collections; building or handling forms; configuring routing or Courier; working with Canopy or Cassettes; using the Blutui MCP; or setting up a new Blutui project from scratch. If the user mentions Blutui, Canopy, Cassettes, Courier, or any Blutui-specific concept, always load and follow this skill before writing any code or configuration.
+description: Blutui project guidelines from the Blutui Engineering team. Use this skill whenever working on ANY Blutui project — writing or editing templates, layouts, components, or partials; creating or querying Collections; building or handling forms; configuring routing or Courier; working with Canopy or Cassettes; using the Blutui MCP; or setting up a new Blutui project from scratch (including "Get started with Blutui", "Set up my Blutui site", or "Continue Blutui setup"). If the user mentions Blutui, Canopy, Cassettes, Courier, or any Blutui-specific concept, always load and follow this skill before writing any code or configuration.
 license: MIT
 metadata:
   author: Blutui
@@ -15,6 +15,7 @@ Load the rule files that match your task. Always load ALL that apply — multipl
 
 | Task                                                      | Load                                                            |
 | --------------------------------------------------------- | --------------------------------------------------------------- |
+| Getting started / setting up a new site ("Continue Blutui setup") | `rules/get-started.md`                                      |
 | Creating/editing any template, layout, or component       | `rules/foundation-templates-and-layouts.md`                     |
 | Writing Canvas template syntax (tags, filters, functions) | `rules/templating-canvas.md`                                    |
 | Including/embedding other templates                       | `rules/templating-including-templates.md`                       |
