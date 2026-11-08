@@ -25,7 +25,6 @@ RULE_FILES=(
   "menus.md"
   "route-patterns.md"
   "canopy.md"
-  "get-started.md"
 )
 
 # Strip YAML frontmatter (everything between the first pair of --- lines)

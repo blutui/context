@@ -39,8 +39,3 @@ The section ID (in parentheses) is the filename prefix used to group rules.
 
 **Impact:** HIGH
 **Description:** In-page editor integration. Canopy Blocks let developers define reusable section templates that editors add, fill in, and arrange in the browser. Legacy Canopy elements (cms_*) are deprecated.
-
-## 8. Getting Started (get-started)
-
-**Impact:** HIGH
-**Description:** Interactive onboarding that takes a user from a freshly created Courier project to a working site on staging: preflight checks, a site interview recorded in a brief, the build order, and handover.

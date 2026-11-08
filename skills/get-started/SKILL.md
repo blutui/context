@@ -1,15 +1,26 @@
 ---
-title: Get Started
-impact: HIGH
-impactDescription: Onboarding Flow - Guides a user from an empty Courier project to a working site on their staging URL. Skipping the preflight or the interview leads to sites built in the wrong folder, against the wrong project, or with a content model the user never asked for.
-tags: get started, setup, onboarding, interview, brief, agent setup
+name: get-started
+description: Interactive setup for a new Blutui site. Interviews the user about the site they want, records a brief, then builds the content model, templates, layouts, pages, and Canopy blocks and pushes to staging. Only use this skill when the user explicitly runs `/get-started`; never load it automatically. Run it from a project folder created with `courier create`.
+disable-model-invocation: true
+license: MIT
+metadata:
+  author: Blutui
+  version: '1.0.0'
 ---
 
-## Get Started with Blutui (Interactive Guide)
+# Get Started with Blutui
 
-**Trigger:** The user says "Set up my Blutui site", "Get started with Blutui", or pastes the Agent Setup prompt from the Blutui console.
+This skill only runs when the user invokes it with `/get-started`. Never start it on your own. The expected order is:
 
-**Resume trigger:** The user says "Continue Blutui setup". See [Resuming](#resuming).
+1. The user installs Courier and runs `courier login`.
+2. The user runs `courier create <handle>` (with `--context` to install the Blutui MCP server and skills), then `cd <handle>`.
+3. The user starts their agent in that folder and runs `/get-started`.
+
+If the user includes extra context with the command (project name, handle, cassette, staging URL), use it during preflight and the interview.
+
+Running `/get-started` again in a project that already has a `BLUTUI_BRIEF.md` resumes setup. See [Resuming](#resuming).
+
+**Rules:** This skill sets the order of work. For how to do each step, load the `blutui-project-guidelines` skill and the rule files it names (e.g. `collections.md` is `rules/collections.md` in that skill). For Canopy blocks, also load the `blutui-canopy-blocks` skill. If those skills aren't installed, ask the user to run `npx skills add https://github.com/blutui/context` and restart you.
 
 Setup runs in four phases:
 
@@ -18,7 +29,7 @@ Setup runs in four phases:
 3. **Build** — Create the content model, templates, layouts, and pages.
 4. **Review** — Run the site locally, push it to staging, and hand over.
 
-Before starting, tell the user they can stop at any time and pick up later by saying "Continue Blutui setup".
+Before starting, tell the user they can stop at any time and pick up later by running `/get-started` again.
 
 ### Communication Style
 
@@ -34,7 +45,7 @@ Before starting, tell the user they can stop at any time and pick up later by sa
 Run every check before asking any interview question. Stop at the first failure and tell the user exactly what to do.
 
 1. **Project folder.** Confirm `courier.json` exists in the working directory. If the prompt gave a project handle, confirm `courier.json` has the same `handle`.
-   - If `courier.json` is missing, stop and ask the user to restart you from the project folder created by `courier create` (or `courier init` for an existing folder).
+   - If `courier.json` is missing, stop. Ask the user to run `courier create <handle>` (or `courier init` in an existing folder), `cd` into the project, restart you there, and run `/get-started` again.
    - If the handle doesn't match, stop and ask which project they meant. Never edit `handle` to make it match.
 2. **Courier.** Run `courier version`. If it fails, stop and send the user to the [Courier installation guide](https://docs.blutui.com/docs/courier/getting-started).
 3. **Blutui MCP.** Call `search_blutui_documentation` with a simple query.
@@ -190,13 +201,13 @@ After each step, tick it off in the brief and tell the user in one line what was
    - What was built: pages, collections, forms, menus, and blocks.
    - What's left for them: menu items or settings to add in the dashboard, placeholder content to replace, and images to upload.
    - That publishing the site to the public is done from the Blutui console and is a paid step. Never attempt to publish.
-   - They can say "Continue Blutui setup" to keep going, or ask for changes at any time.
+   - They can run `/get-started` again to pick up unfinished steps, or ask for changes at any time.
 
 ---
 
 ## Resuming
 
-When the user says "Continue Blutui setup":
+When `/get-started` runs in a project that has already been set up, or partly set up:
 
 1. Re-run the Phase 1 preflight.
 2. Read `BLUTUI_BRIEF.md`. If it exists, find the first unticked item in **Progress** and confirm with the user before continuing from there.
