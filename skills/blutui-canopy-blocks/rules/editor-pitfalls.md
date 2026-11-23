@@ -176,6 +176,12 @@ Run this once per layout, not per page: every page built from the same layout an
 - [ ] Open the page in **Full page** mode and scroll once. The page isn't absurdly tall, every block's content is visible, and nothing moves on its own.
 - [ ] Click one link to another site. The preview stays on the page.
 
+**No browser access?** If you can't drive the user's browser (no browser tool, or a provider without browser support), you can't run step 2 yourself. The editor needs the user's signed-in Blutui session, and staging is password-protected. A headless browser or loading the page with `?blutui_editor=1` doesn't count: the runaway-height bug only appears when the editor resizes its frame.
+
+- Do step 1 and fix what it finds. It covers every failure seen in testing.
+- Give the user step 2 as exact instructions: "Open the page in Canopy, switch to **Full page** and scroll once. Is anything huge, blank or moving? Then click a link to another site. Does the preview stay on the page?"
+- Report the editor check as **not done** until the user confirms it. Never describe the page as verified in the editor.
+
 **Only when it applies:**
 
 - If the site has a fixed or overlaying header, drag a non-hero block to the top and check nothing is hidden under it (pitfall 5).
