@@ -50,7 +50,7 @@ Outputs every block editors have added to the area, in the order they arranged t
 {{ canopy.blocks('footer', ['cta_banner'], { locked: true }) }}
 ```
 
-Use this when a page must always show a fixed sequence of sections that editors can still fill in.
+The list is a **seed, not a lock** (verified in the editor): until an editor saves, the area renders these templates with their defaults. After that, editors can still add, reorder and delete blocks, and the saved editor state is what renders. Use it to ship a page that looks complete before anyone edits it. Add `{ locked: true }` only when the structure really must not change.
 
 ### `canopy.head(handle)` and `canopy.scripts(handle)`
 
