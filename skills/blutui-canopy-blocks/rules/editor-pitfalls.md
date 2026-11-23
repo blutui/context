@@ -161,9 +161,22 @@ For animations: pair every `transitionend` with `setTimeout(finish, durationMs +
 
 ### Checklist before handing a page to editors
 
-- [ ] Open the page in the editor in **Screen** and **Full page** modes. The frame height in Full page mode should match the real page height.
-- [ ] Every block's content is visible with no scrolling or interaction needed.
-- [ ] Click a link in each block. The block gets selected and the preview stays on the page.
-- [ ] Drag a non-hero block to the top. Nothing is hidden under a fixed header.
-- [ ] Nothing moves on its own (autoplay, timers, marquees).
-- [ ] Add, reorder, Save, and check the public page matches. Then Discard or undo test changes.
+Run this once per layout, not per page: every page built from the same layout and blocks behaves the same.
+
+**1. Code check (as you build, no editor needed).** Search the project's CSS and JS for patterns behind the known failures:
+
+- [ ] `vh` / `dvh` / `svh` / `lvh` in section heights → use `var(--screen-h, 100dvh)` (pitfall 1)
+- [ ] Content hidden until JS reveals it (`opacity: 0`, `visibility: hidden`, off-screen transforms) → shown in the editor (pitfall 4)
+- [ ] `autoplay`, slider or carousel timers, `setInterval` → off in the editor (pitfall 7)
+- [ ] Absolute links to other origins → the editor link guard is in place (pitfall 2)
+- [ ] `transitionend` / `animationend` → a timeout fallback is paired with each (pitfall 6)
+
+**2. Look in the editor (about 1–2 minutes per layout).**
+
+- [ ] Open the page in **Full page** mode and scroll once. The page isn't absurdly tall, every block's content is visible, and nothing moves on its own.
+- [ ] Click one link to another site. The preview stays on the page.
+
+**Only when it applies:**
+
+- If the site has a fixed or overlaying header, drag a non-hero block to the top and check nothing is hidden under it (pitfall 5).
+- After an editor update, or on areas using `locked` / `allow`: add and reorder a block, Save, check the public page matches, then undo. This tests the editor's behaviour more than your code.
